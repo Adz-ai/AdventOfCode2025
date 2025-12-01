@@ -36,15 +36,6 @@
         <exclude name="CallSuperInConstructor"/>
         <!-- var is idiomatic in modern Java (10+) -->
         <exclude name="UseExplicitTypes"/>
-        <!-- Configure separately to allow lowercase logger names -->
-        <exclude name="FieldNamingConventions"/>
-    </rule>
-
-    <!-- Allow lowercase 'log' for SLF4J loggers (standard convention) -->
-    <rule ref="category/java/codestyle.xml/FieldNamingConventions">
-        <properties>
-            <property name="constantPattern" value="[A-Z][A-Z_0-9]*|log" />
-        </properties>
     </rule>
 
     <rule ref="category/java/design.xml">

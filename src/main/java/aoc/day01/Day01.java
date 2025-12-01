@@ -8,32 +8,32 @@ import org.slf4j.LoggerFactory;
 
 public class Day01 {
 
-    private static final Logger log = LoggerFactory.getLogger(Day01.class);
-    private static final char LEFT_DIRECTION = 'L';
+  private static final Logger LOG = LoggerFactory.getLogger(Day01.class);
+  private static final char LEFT_DIRECTION = 'L';
 
-    void main() {
-        try {
-            var lines = FileUtils.readLines("day01/input");
-            var lock = runSimulation(lines);
+  void main() {
+    try {
+      var lines = FileUtils.readLines("day01/input");
+      var lock = runSimulation(lines);
 
-            log.info("Part 1: {}", lock.getEndOfRotationZeroCount());
-            log.info("Part 2: {}", lock.getZeroHitCount());
+      LOG.info("Part 1: {}", lock.getEndOfRotationZeroCount());
+      LOG.info("Part 2: {}", lock.getZeroHitCount());
 
-        } catch (IOException e) {
-            log.error("Error reading input", e);
-        }
+    } catch (IOException e) {
+      LOG.error("Error reading input", e);
     }
+  }
 
-    SafeLock runSimulation(List<String> lines) {
-        var lock = new SafeLock();
-        for (var line : lines) {
-            int amount = Integer.parseInt(line.substring(1));
-            if (line.charAt(0) == LEFT_DIRECTION) {
-                lock.turnCounterClockwise(amount);
-            } else {
-                lock.turnClockwise(amount);
-            }
-        }
-        return lock;
+  SafeLock runSimulation(List<String> lines) {
+    var lock = new SafeLock();
+    for (var line : lines) {
+      int amount = Integer.parseInt(line.substring(1));
+      if (line.charAt(0) == LEFT_DIRECTION) {
+        lock.turnCounterClockwise(amount);
+      } else {
+        lock.turnClockwise(amount);
+      }
     }
+    return lock;
+  }
 }

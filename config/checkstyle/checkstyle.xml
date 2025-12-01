@@ -6,11 +6,6 @@
 <!--
     Checkstyle configuration based on Google Java Style Guide
     https://google.github.io/styleguide/javaguide.html
-
-    Modified for Advent of Code projects:
-    - Increased line length to 120 (from 100)
-    - Using 4-space indentation (from 2)
-    - Relaxed Javadoc requirements
  -->
 
 <module name="Checker">
@@ -38,7 +33,7 @@
         <property name="eachLine" value="true"/>
     </module>
     <module name="LineLength">
-        <property name="max" value="120"/>
+        <property name="max" value="100"/>
         <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
     </module>
     <module name="NewlineAtEndOfFile"/>
@@ -115,12 +110,12 @@
         <module name="ArrayTypeStyle"/>
         <module name="CommentsIndentation"/>
         <module name="Indentation">
-            <property name="basicOffset" value="4"/>
-            <property name="braceAdjustment" value="0"/>
-            <property name="caseIndent" value="4"/>
+            <property name="basicOffset" value="2"/>
+            <property name="braceAdjustment" value="2"/>
+            <property name="caseIndent" value="2"/>
             <property name="throwsIndent" value="4"/>
             <property name="lineWrappingIndentation" value="4"/>
-            <property name="arrayInitIndent" value="4"/>
+            <property name="arrayInitIndent" value="2"/>
         </module>
         <module name="OuterTypeFilename"/>
         <module name="UpperEll"/>
@@ -142,8 +137,7 @@
             <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
         </module>
         <module name="ConstantName">
-            <!-- Allow lowercase 'log' for SLF4J loggers (standard convention) -->
-            <property name="format" value="^([A-Z][A-Z0-9]*(_[A-Z0-9]+)*|log)$"/>
+            <property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
         </module>
         <module name="LambdaParameterName">
             <property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>
