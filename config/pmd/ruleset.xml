@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<ruleset name="AdventOfCode Rules"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        PMD rules for Advent of Code project.
+        Based on PMD defaults with minimal exclusions for rules that conflict
+        with modern Java idioms or are too opinionated for this codebase.
+    </description>
+
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="UnitTestContainsTooManyAsserts"/>
+        <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
+        <!-- SLF4J parameterized logging ({}) already defers string construction -->
+        <exclude name="GuardLogStatement"/>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml">
+        <!-- Final parameters/variables add noise without benefit in modern Java -->
+        <exclude name="MethodArgumentCouldBeFinal"/>
+        <exclude name="LocalVariableCouldBeFinal"/>
+        <!-- Early returns improve readability -->
+        <exclude name="OnlyOneReturn"/>
+        <!-- Field initializers are preferred over empty constructors -->
+        <exclude name="AtLeastOneConstructor"/>
+        <!-- Package-private access is intentional, comments add clutter -->
+        <exclude name="CommentDefaultAccessModifier"/>
+        <!-- Variable naming depends on context (i, j, x, y are fine in algorithms) -->
+        <exclude name="ShortVariable"/>
+        <exclude name="LongVariable"/>
+        <exclude name="ShortMethodName"/>
+        <exclude name="ShortClassName"/>
+        <!-- Implicit super() call is standard Java -->
+        <exclude name="CallSuperInConstructor"/>
+        <!-- var is idiomatic in modern Java (10+) -->
+        <exclude name="UseExplicitTypes"/>
+        <!-- Configure separately to allow lowercase logger names -->
+        <exclude name="FieldNamingConventions"/>
+    </rule>
+
+    <!-- Allow lowercase 'log' for SLF4J loggers (standard convention) -->
+    <rule ref="category/java/codestyle.xml/FieldNamingConventions">
+        <properties>
+            <property name="constantPattern" value="[A-Z][A-Z_0-9]*|log" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml">
+        <!-- Too strict for most practical code -->
+        <exclude name="LawOfDemeter"/>
+        <!-- Not relevant for small projects -->
+        <exclude name="LoosePackageCoupling"/>
+        <!-- Private constructors on utility classes add boilerplate -->
+        <exclude name="UseUtilityClass"/>
+        <!-- Arbitrary limit that doesn't account for simple methods -->
+        <exclude name="TooManyMethods"/>
+    </rule>
+
+    <rule ref="category/java/errorprone.xml">
+        <!-- Serialization is not used in this project -->
+        <exclude name="NonSerializableClass"/>
+    </rule>
+
+    <rule ref="category/java/performance.xml"/>
+
+    <rule ref="category/java/security.xml"/>
+</ruleset>

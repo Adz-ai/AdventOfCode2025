@@ -5,8 +5,8 @@ public class SafeLock {
     private static final int STARTING_POSITION = 50;
 
     private int position = STARTING_POSITION;
-    private int zeroHitCount = 0;
-    private int endOfRotationZeroCount = 0;
+    private int zeroHitCount;
+    private int endOfRotationZeroCount;
 
     public int getZeroHitCount() {
         return zeroHitCount;
@@ -25,7 +25,9 @@ public class SafeLock {
     }
 
     private void turn(int steps) {
-        if (steps == 0) return;
+        if (steps == 0) {
+            return;
+        }
 
         zeroHitCount += countZeroCrossings(steps);
         position = Math.floorMod(position + steps, DIAL_SIZE);

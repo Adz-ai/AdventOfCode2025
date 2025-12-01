@@ -1,10 +1,9 @@
 package aoc.day01;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 class Day01Test {
 
@@ -58,7 +57,7 @@ class Day01Test {
         var lock = new SafeLock();
         lock.turnClockwise(50);
         lock.turnCounterClockwise(1);
-        
+
         assertEquals(1, lock.getZeroHitCount());
     }
 }

@@ -8,16 +8,20 @@ import java.util.List;
 
 public class FileUtils {
 
+    private static final String TXT_EXTENSION = ".txt";
+    private static final String RESOURCES_PATH = "src/main/resources";
+
     public static List<String> readLines(String filename) throws IOException {
-        var fullFilename = filename.endsWith(".txt") ? filename : filename + ".txt";
-        var path = Path.of("src/main/resources", fullFilename);
-        return Files.readAllLines(path);
+        return Files.readAllLines(resolveInputPath(filename));
     }
 
     public static String readAsString(String filename) throws IOException {
-        var fullFilename = filename.endsWith(".txt") ? filename : filename + ".txt";
-        var path = Path.of("src/main/resources", fullFilename);
-        return Files.readString(path);
+        return Files.readString(resolveInputPath(filename));
+    }
+
+    private static Path resolveInputPath(String filename) {
+        String fullFilename = filename.endsWith(TXT_EXTENSION) ? filename : filename + TXT_EXTENSION;
+        return Path.of(RESOURCES_PATH, fullFilename);
     }
 
     public static List<Long> toLongList(List<String> input) {
