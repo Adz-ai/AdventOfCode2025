@@ -23,10 +23,8 @@ public class Day01 {
     SafeLock runSimulation(List<String> lines) {
         var lock = new SafeLock();
         for (var line : lines) {
-            var split = line.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
-            var direction = split[0].charAt(0);
-            var amount = Integer.parseInt(split[1]);
-            if (direction == 'L') {
+            int amount = Integer.parseInt(line.substring(1));
+            if (line.charAt(0) == 'L') {
                 lock.turnCounterClockwise(amount);
             } else {
                 lock.turnClockwise(amount);
