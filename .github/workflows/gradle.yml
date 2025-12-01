@@ -78,7 +78,7 @@ jobs:
           files: build/test-results/**/*.xml
 
       - name: Verify All Checks Pass
-        run: ./gradlew check
+        run: ./gradlew check --scan
 
   dependency-submission:
     runs-on: ubuntu-latest

@@ -1,1 +1,13 @@
+plugins {
+    id 'com.gradle.develocity' version '4.2.2'
+}
+
 rootProject.name = 'AdventOfCode2025'
+
+develocity {
+    buildScan {
+        termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
+        termsOfUseAgree = "yes"
+        publishing.onlyIf { System.getenv("CI") != null }
+    }
+}
