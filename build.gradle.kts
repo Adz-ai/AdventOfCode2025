@@ -6,7 +6,7 @@ plugins {
     application
     checkstyle
     pmd
-    id("com.github.spotbugs") version "6.0.26"
+    id("com.github.spotbugs") version "6.4.7"
 }
 
 group = "com.aoc"
@@ -23,11 +23,9 @@ repositories {
 }
 
 dependencies {
-    // Logging
     implementation("org.slf4j:slf4j-api:2.0.16")
     runtimeOnly("ch.qos.logback:logback-classic:1.5.13")
 
-    // Testing
     testImplementation(platform("org.junit:junit-bom:5.11.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -37,14 +35,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
-// Checkstyle - code style enforcement
 checkstyle {
     toolVersion = "10.20.1"
     isIgnoreFailures = false
     maxWarnings = 0
 }
 
-// PMD - static code analysis
 pmd {
     toolVersion = "7.19.0"
     isIgnoreFailures = false
@@ -53,7 +49,6 @@ pmd {
     threads = 4
 }
 
-// SpotBugs - bug detection
 spotbugs {
     toolVersion = "4.9.8"
     ignoreFailures = false
@@ -61,8 +56,10 @@ spotbugs {
 }
 
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
-    reports.create("html") { required = true }
-    reports.create("xml") { required = false }
+    reports {
+        maybeCreate("html").required.set(true)
+        maybeCreate("xml").required.set(false)
+    }
 }
 
 tasks.register("fetchInput") {
