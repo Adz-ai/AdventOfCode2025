@@ -7,6 +7,8 @@ plugins {
     checkstyle
     pmd
     id("com.github.spotbugs") version "6.4.7"
+    id("com.github.ben-manes.versions") version "0.53.0"
+    id("se.patrikerdes.use-latest-versions") version "0.2.19"
 }
 
 group = "com.aoc"
@@ -23,10 +25,10 @@ repositories {
 }
 
 dependencies {
-    implementation("org.slf4j:slf4j-api:2.0.16")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.13")
+    implementation("org.slf4j:slf4j-api:2.1.0-alpha1")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.21")
 
-    testImplementation(platform("org.junit:junit-bom:5.11.0"))
+    testImplementation(platform("org.junit:junit-bom:6.1.0-M1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
