@@ -10,20 +10,28 @@ public class Day01 {
     void main() {
         try {
             var lines = FileUtils.readLines("day01/input");
+            var lock = runSimulation(lines);
 
-            System.out.println("Part 1: " + part1(lines));
-            System.out.println("Part 2: " + part2(lines));
+            System.out.println("Part 1: " + lock.getEndOfRotationZeroCount());
+            System.out.println("Part 2: " + lock.getZeroHitCount());
 
         } catch (IOException e) {
             System.err.println("Error reading input: " + e.getMessage());
         }
     }
 
-    int part1(List<String> lines) {
-        return 0;
-    }
-
-    int part2(List<String> lines) {
-        return 0;
+    SafeLock runSimulation(List<String> lines) {
+        var lock = new SafeLock();
+        for (var line : lines) {
+            var split = line.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+            var direction = split[0].charAt(0);
+            var amount = Integer.parseInt(split[1]);
+            if (direction == 'L') {
+                lock.turnCounterClockwise(amount);
+            } else {
+                lock.turnClockwise(amount);
+            }
+        }
+        return lock;
     }
 }
