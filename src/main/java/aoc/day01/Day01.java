@@ -3,14 +3,24 @@ package aoc.day01;
 import aoc.util.FileUtils;
 import java.io.IOException;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Solution for Advent of Code 2025 Day 1: Safe Lock.
+ *
+ * <p>Simulates a safe lock dial that rotates left or right based on input instructions.
+ * Tracks how many times the dial passes through or lands on position zero.
+ */
 public class Day01 {
 
   private static final Logger LOG = LoggerFactory.getLogger(Day01.class);
   private static final char LEFT_DIRECTION = 'L';
 
+  /**
+   * Runs the Day 1 solution.
+   */
   void main() {
     try {
       var lines = FileUtils.readLines("day01/input");
@@ -24,7 +34,13 @@ public class Day01 {
     }
   }
 
-  SafeLock runSimulation(List<String> lines) {
+  /**
+   * Runs the lock simulation by processing rotation instructions.
+   *
+   * @param lines  the rotation instructions, each starting with 'L' or 'R' followed by steps
+   * @return the SafeLock after all rotations have been applied
+   */
+  SafeLock runSimulation(@NotNull List<String> lines) {
     var lock = new SafeLock();
     for (var line : lines) {
       int amount = Integer.parseInt(line.substring(1));

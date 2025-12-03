@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.LongPredicate;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public class Day02 {
     return sumInvalidIds(ranges, this::isInvalidIdPart2);
   }
 
-  private long sumInvalidIds(List<Range> ranges, LongPredicate isInvalid) {
+  private long sumInvalidIds(@NotNull List<Range> ranges, LongPredicate isInvalid) {
     return ranges.stream()
         .flatMapToLong(Range::stream)
         .filter(isInvalid)
