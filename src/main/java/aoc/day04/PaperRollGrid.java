@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 
-public final class PaperRollGrid {
+final class PaperRollGrid {
 
   private static final char PAPER_ROLL = '@';
   private static final char EMPTY = '.';
@@ -15,7 +15,7 @@ public final class PaperRollGrid {
   private final int rows;
   private final int cols;
 
-  public PaperRollGrid(@NotNull List<String> lines) {
+  PaperRollGrid(@NotNull List<String> lines) {
     this.rows = lines.size();
     this.cols = lines.isEmpty() ? 0 : lines.getFirst().length();
     this.grid = parseGrid(lines);
@@ -29,7 +29,7 @@ public final class PaperRollGrid {
     return result;
   }
 
-  public long countAccessibleRolls() {
+  long countAccessibleRolls() {
     long count = 0;
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
@@ -41,7 +41,7 @@ public final class PaperRollGrid {
     return count;
   }
 
-  public long countTotalRemovableRolls() {
+  long countTotalRemovableRolls() {
     long totalRemoved = 0;
 
     List<int[]> accessibleRolls = findAccessibleRolls();

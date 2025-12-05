@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * <p>Simulates a safe lock dial that rotates left or right based on input instructions.
  * Tracks how many times the dial passes through or lands on position zero.
  */
-public class Day01 {
+class Day01 {
 
   private static final Logger LOG = LoggerFactory.getLogger(Day01.class);
   private static final char LEFT_DIRECTION = 'L';

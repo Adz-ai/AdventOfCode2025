@@ -6,16 +6,16 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Gatherer;
 import org.jetbrains.annotations.NotNull;
 
-public record IngredientDatabase(
+record IngredientDatabase(
     @NotNull List<FreshRange> freshRanges,
     @NotNull List<Long> availableIngredients) {
 
-  public IngredientDatabase {
+  IngredientDatabase {
     freshRanges = List.copyOf(freshRanges);
     availableIngredients = List.copyOf(availableIngredients);
   }
 
-  public static @NotNull IngredientDatabase parse(@NotNull List<List<String>> sections) {
+  static @NotNull IngredientDatabase parse(@NotNull List<List<String>> sections) {
     var ranges = sections.getFirst().stream()
         .map(FreshRange::parse)
         .toList();
@@ -27,13 +27,13 @@ public record IngredientDatabase(
     return new IngredientDatabase(ranges, ingredients);
   }
 
-  public long countFreshIngredients() {
+  long countFreshIngredients() {
     return availableIngredients.stream()
         .filter(this::isFresh)
         .count();
   }
 
-  public long countTotalFreshIds() {
+  long countTotalFreshIds() {
     return freshRanges.stream()
         .sorted(Comparator.comparingLong(FreshRange::start))
         .gather(mergeOverlappingRanges())

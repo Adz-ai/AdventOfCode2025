@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Day02 {
+class Day02 {
   private static final Logger LOG = LoggerFactory.getLogger(Day02.class);
 
   void main() {

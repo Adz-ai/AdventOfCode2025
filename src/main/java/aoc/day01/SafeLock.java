@@ -6,7 +6,7 @@ package aoc.day01;
  * <p>The dial starts at position 50 and can be turned clockwise or counter-clockwise.
  * Tracks zero crossings during rotation and landings on position zero.
  */
-public class SafeLock {
+class SafeLock {
   private static final int DIAL_SIZE = 100;
   private static final int STARTING_POSITION = 50;
 
@@ -14,39 +14,19 @@ public class SafeLock {
   private int zeroHitCount;
   private int endOfRotationZeroCount;
 
-  /**
-   * Gets the total number of times the dial crossed position zero during any rotation.
-   *
-   * @return the zero crossing count
-   */
-  public int getZeroHitCount() {
+  int getZeroHitCount() {
     return zeroHitCount;
   }
 
-  /**
-   * Gets the count of rotations that ended exactly on position zero.
-   *
-   * @return the end-of-rotation zero count
-   */
-  public int getEndOfRotationZeroCount() {
+  int getEndOfRotationZeroCount() {
     return endOfRotationZeroCount;
   }
 
-  /**
-   * Turns the dial clockwise by the specified number of steps.
-   *
-   * @param steps  the number of steps to rotate, not negative
-   */
-  public void turnClockwise(int steps) {
+  void turnClockwise(int steps) {
     turn(steps);
   }
 
-  /**
-   * Turns the dial counter-clockwise by the specified number of steps.
-   *
-   * @param steps  the number of steps to rotate, not negative
-   */
-  public void turnCounterClockwise(int steps) {
+  void turnCounterClockwise(int steps) {
     turn(-steps);
   }
 
