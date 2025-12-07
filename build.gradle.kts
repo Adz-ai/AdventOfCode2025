@@ -165,6 +165,11 @@ abstract class UpdateReadmeTask : DefaultTask() {
     @get:OutputFile
     abstract val readmeFile: RegularFileProperty
 
+    init {
+        // Always run this task - timing results vary between runs
+        outputs.upToDateWhen { false }
+    }
+
     @TaskAction
     fun execute() {
         val results = mutableListOf<Map<String, String>>()
