@@ -1,6 +1,7 @@
 package aoc.day03;
 
 import aoc.util.FileUtils;
+import aoc.util.SolutionRunner;
 import java.io.IOException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -24,13 +25,15 @@ public class Day03 {
    * Runs the Day 3 solution.
    */
   void main() {
-    try {
-      var lines = FileUtils.readLines("day03/input");
-      LOG.info("Part 1: {}", totalOutputJoltage(lines, 2));
-      LOG.info("Part 2: {}", totalOutputJoltage(lines, PART2_DIGITS));
-    } catch (IOException e) {
-      LOG.error("Error reading input", e);
-    }
+    SolutionRunner.run(LOG, log -> {
+      try {
+        var lines = FileUtils.readLines("day03/input");
+        log.info("Part 1: {}", totalOutputJoltage(lines, 2));
+        log.info("Part 2: {}", totalOutputJoltage(lines, PART2_DIGITS));
+      } catch (IOException e) {
+        log.error("Error reading input", e);
+      }
+    });
   }
 
   /**
