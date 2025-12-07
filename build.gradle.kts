@@ -1,3 +1,4 @@
+import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -155,4 +156,80 @@ tasks.register("runAll") {
             }
         }
     }
+}
+
+abstract class UpdateReadmeTask : DefaultTask() {
+    @get:InputFiles
+    abstract val runtimeClasspath: ConfigurableFileCollection
+
+    @get:OutputFile
+    abstract val readmeFile: RegularFileProperty
+
+    @TaskAction
+    fun execute() {
+        val results = mutableListOf<Map<String, String>>()
+        val cp = runtimeClasspath.asPath
+
+        (1..12).forEach { day ->
+            val dayNum = "%02d".format(day)
+            val dayMainClass = "aoc.day$dayNum.Day$dayNum"
+
+            try {
+                val outputStream = ByteArrayOutputStream()
+                val process = ProcessBuilder("java", "-cp", cp, dayMainClass)
+                    .redirectErrorStream(true)
+                    .start()
+
+                process.inputStream.copyTo(outputStream)
+                val exitCode = process.waitFor()
+
+                if (exitCode == 0) {
+                    val outputText = outputStream.toString()
+                    val part1 = Regex("""Part 1: (\d+)""").find(outputText)?.groupValues?.get(1) ?: "-"
+                    val part2 = Regex("""Part 2: (\d+)""").find(outputText)?.groupValues?.get(1) ?: "-"
+                    val time = Regex("""Completed in (.+)""").find(outputText)?.groupValues?.get(1) ?: "-"
+
+                    results.add(mapOf("day" to day.toString(), "part1" to part1, "part2" to part2, "time" to time))
+                    println("Day $day: Part1=$part1, Part2=$part2, Time=$time")
+                } else {
+                    println("Day $day: Not implemented")
+                }
+            } catch (e: Exception) {
+                println("Day $day: Not implemented")
+            }
+        }
+
+        // Update README
+        val readme = readmeFile.get().asFile
+        val content = readme.readText()
+
+        val tableHeader = "## Performance\n\n| Day | Time |\n|-----|------|"
+
+        val tableRows = results.joinToString("\n") { result ->
+            "| ${result["day"]} | ${result["time"]} |"
+        }
+
+        val performanceSection = "$tableHeader\n$tableRows\n"
+
+        val newContent = if (content.contains("## Performance")) {
+            content.replace(
+                Regex("""## Performance\n\n\|.*?\n\|[-|\s]+\n(\|.*\n)*"""),
+                performanceSection
+            )
+        } else {
+            content.trimEnd() + "\n\n" + performanceSection
+        }
+
+        readme.writeText(newContent)
+        println("\nREADME.md updated with performance table")
+    }
+}
+
+tasks.register<UpdateReadmeTask>("updateReadme") {
+    description = "Runs all solutions and updates README with performance table"
+    group = "adventOfCode"
+    dependsOn("classes")
+
+    runtimeClasspath.from(sourceSets["main"].runtimeClasspath)
+    readmeFile.set(layout.projectDirectory.file("README.md"))
 }
