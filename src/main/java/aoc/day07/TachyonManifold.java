@@ -115,7 +115,8 @@ record TachyonManifold(char[][] grid, int startCol) {
 
   @SuppressWarnings("PMD.UseVarargs")
   private void propagateTimelines(int row, long[] current, long[] next) {
-    for (int col = 0; col < width(); col++) {
+    int w = width();
+    for (int col = 0; col < w; col++) {
       long count = current[col];
       if (count == 0) {
         continue;
@@ -125,7 +126,7 @@ record TachyonManifold(char[][] grid, int startCol) {
         if (col > 0) {
           next[col - 1] += count;
         }
-        if (col + 1 < width()) {
+        if (col + 1 < w) {
           next[col + 1] += count;
         }
       } else {

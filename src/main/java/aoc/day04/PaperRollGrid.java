@@ -44,7 +44,7 @@ final class PaperRollGrid {
   long countTotalRemovableRolls() {
     long totalRemoved = 0;
 
-    List<int[]> accessibleRolls = findAccessibleRolls();
+    var accessibleRolls = findAccessibleRolls();
     while (!accessibleRolls.isEmpty()) {
       totalRemoved += accessibleRolls.size();
       removeRolls(accessibleRolls);
@@ -54,21 +54,21 @@ final class PaperRollGrid {
     return totalRemoved;
   }
 
-  private @NotNull List<int[]> findAccessibleRolls() {
-    var accessible = new ArrayList<int[]>();
+  private @NotNull List<Position> findAccessibleRolls() {
+    var accessible = new ArrayList<Position>();
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
         if (isPaperRoll(row, col) && isAccessible(row, col)) {
-          accessible.add(new int[]{row, col});
+          accessible.add(new Position(row, col));
         }
       }
     }
     return accessible;
   }
 
-  private void removeRolls(@NotNull List<int[]> rolls) {
-    for (int[] position : rolls) {
-      grid[position[0]][position[1]] = EMPTY;
+  private void removeRolls(@NotNull List<Position> rolls) {
+    for (var pos : rolls) {
+      grid[pos.row()][pos.col()] = EMPTY;
     }
   }
 
@@ -101,5 +101,8 @@ final class PaperRollGrid {
 
   private boolean isWithinBounds(int row, int col) {
     return row >= 0 && row < rows && col >= 0 && col < cols;
+  }
+
+  private record Position(int row, int col) {
   }
 }

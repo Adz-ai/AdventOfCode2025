@@ -60,7 +60,7 @@ public class Day03 {
    * @return the maximum joltage as a long value
    */
   long maxJoltage(@NotNull String bank, int digitCount) {
-    var result = new StringBuilder();
+    long result = 0;
     int startIdx = 0;
 
     for (int remaining = digitCount; remaining > 0; remaining--) {
@@ -79,10 +79,10 @@ public class Day03 {
         }
       }
 
-      result.append((char) ('0' + maxDigit));
+      result = result * 10 + maxDigit;
       startIdx = maxIdx + 1;
     }
 
-    return Long.parseLong(result.toString());
+    return result;
   }
 }
