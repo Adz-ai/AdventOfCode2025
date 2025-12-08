@@ -19,11 +19,11 @@ class UnionFind {
     }
   }
 
-  int find(int x) {
-    if (parent[x] != x) {
-      parent[x] = find(parent[x]); // Path compression
+  int find(int node) {
+    if (parent[node] != node) {
+      parent[node] = find(parent[node]); // Path compression
     }
-    return parent[x];
+    return parent[node];
   }
 
   void union(int x, int y) {
