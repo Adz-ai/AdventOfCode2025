@@ -1,9 +1,11 @@
 package aoc.day09;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class Day09Test {
 
@@ -62,7 +64,7 @@ class Day09Test {
     var theater = MovieTheater.parse(EXAMPLE_INPUT);
     for (int x = 2; x <= 9; x++) {
       for (int y = 3; y <= 5; y++) {
-          assertTrue(theater.testContainsPoint(x, y), "(" + x + "," + y + ") should be inside");
+        assertTrue(theater.testContainsPoint(x, y), "(" + x + "," + y + ") should be inside");
       }
     }
   }
