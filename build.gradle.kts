@@ -204,11 +204,14 @@ abstract class UpdateReadmeTask : DefaultTask() {
             }
         }
 
+        // Get machine specs
+        val machineSpecs = getMachineSpecs()
+
         // Update README
         val readme = readmeFile.get().asFile
         val content = readme.readText()
 
-        val tableHeader = "## Performance\n\n| Day | Time |\n|-----|------|"
+        val tableHeader = "## Performance\n\n$machineSpecs\n\n| Day | Time |\n|-----|------|"
 
         val tableRows = results.joinToString("\n") { result ->
             "| ${result["day"]} | ${result["time"]} |"
@@ -218,7 +221,7 @@ abstract class UpdateReadmeTask : DefaultTask() {
 
         val newContent = if (content.contains("## Performance")) {
             content.replace(
-                Regex("""## Performance\n\n\|.*?\n\|[-|\s]+\n(\|.*\n)*"""),
+                Regex("""## Performance\n\n(\*\*Machine:\*\*.*?\n\n)?\|.*?\n\|[-|\s]+\n(\|.*\n)*"""),
                 performanceSection
             )
         } else {
@@ -227,6 +230,24 @@ abstract class UpdateReadmeTask : DefaultTask() {
 
         readme.writeText(newContent)
         println("\nREADME.md updated with performance table")
+    }
+
+    private fun getMachineSpecs(): String {
+        return try {
+            val process = ProcessBuilder("system_profiler", "SPHardwareDataType")
+                .redirectErrorStream(true)
+                .start()
+            val output = process.inputStream.bufferedReader().readText()
+            process.waitFor()
+
+            val chip = Regex("""Chip: (.+)""").find(output)?.groupValues?.get(1)?.trim() ?: "Unknown"
+            val memory = Regex("""Memory: (.+)""").find(output)?.groupValues?.get(1)?.trim() ?: "Unknown"
+            val cores = Regex("""Total Number of Cores: (.+)""").find(output)?.groupValues?.get(1)?.trim() ?: "Unknown"
+
+            "**Machine:** $chip, $cores cores, $memory RAM"
+        } catch (e: Exception) {
+            "**Machine:** Unknown"
+        }
     }
 }
 
