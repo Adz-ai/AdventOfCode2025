@@ -113,7 +113,6 @@ record TachyonManifold(char[][] grid, int startCol) {
     return java.util.Arrays.stream(current).sum();
   }
 
-  @SuppressWarnings("PMD.UseVarargs")
   private void propagateTimelines(int row, long[] current, long[] next) {
     int w = width();
     for (int col = 0; col < w; col++) {

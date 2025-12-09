@@ -15,6 +15,8 @@
         <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
         <!-- SLF4J parameterized logging ({}) already defers string construction -->
         <exclude name="GuardLogStatement"/>
+        <!-- Varargs not appropriate for parallel primitive arrays used for performance -->
+        <exclude name="UseVarargs"/>
     </rule>
 
     <rule ref="category/java/codestyle.xml">

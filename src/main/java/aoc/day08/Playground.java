@@ -11,7 +11,6 @@ final class Playground {
   private final int[] zcoords;
   private long[] sortedPairData;
 
-  @SuppressWarnings("PMD.UseVarargs")
   private Playground(int[] xcoords, int[] ycoords, int[] zcoords) {
     this.xcoords = xcoords;
     this.ycoords = ycoords;
