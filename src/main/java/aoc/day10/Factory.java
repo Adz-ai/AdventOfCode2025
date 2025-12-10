@@ -82,13 +82,13 @@ final class Factory {
   }
 
   long minTotalButtonPresses() {
-    return machines.stream()
+    return machines.parallelStream()
         .mapToLong(Machine::minButtonPressesPartOne)
         .sum();
   }
 
   long minTotalJoltagePresses() {
-    return machines.stream()
+    return machines.parallelStream()
         .mapToLong(Machine::minButtonPressesPartTwo)
         .sum();
   }
