@@ -1,21 +1,17 @@
 package aoc.day10;
 
-import com.google.ortools.Loader;
-import com.google.ortools.linearsolver.MPConstraint;
-import com.google.ortools.linearsolver.MPObjective;
-import com.google.ortools.linearsolver.MPSolver;
-import com.google.ortools.linearsolver.MPVariable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.ojalgo.optimisation.Expression;
+import org.ojalgo.optimisation.ExpressionsBasedModel;
+import org.ojalgo.optimisation.Optimisation;
+import org.ojalgo.optimisation.Variable;
 
 /**
- * Integer Linear Programming solver using Google OR-Tools.
+ * Integer Linear Programming solver using OJALGO.
  * Minimizes sum of non-negative integer variables subject to linear equality constraints.
  */
 final class IlpSolver {
-
-  private static final double INFINITY = Double.POSITIVE_INFINITY;
-  private static volatile boolean nativeLoaded;
 
   private final int[][] coefficients;
   private final int[] targets;
@@ -35,77 +31,61 @@ final class IlpSolver {
     return new IlpSolver(coefficients, targets);
   }
 
-  private static synchronized void ensureNativeLoaded() {
-    if (!nativeLoaded) {
-      Loader.loadNativeLibraries();
-      nativeLoaded = true;
-    }
-  }
-
   long solveMinSum() {
     if (numVariables == 0) {
       return allTargetsZero() ? 0 : Long.MAX_VALUE;
     }
 
-    ensureNativeLoaded();
-    MPSolver solver = createSolver();
-    MPVariable[] variables = createVariables(solver);
-    addConstraints(solver, variables);
-    configureObjective(solver, variables);
+    ExpressionsBasedModel model = new ExpressionsBasedModel();
 
-    return solve(solver, variables);
-  }
+    // Create non-negative integer variables
+    Variable[] variables = createVariables(model);
 
-  private @NotNull MPSolver createSolver() {
-    MPSolver solver = MPSolver.createSolver("SCIP");
-    if (solver == null) {
-      solver = MPSolver.createSolver("CBC");
-    }
-    if (solver == null) {
-      throw new IllegalStateException("Could not create ILP solver");
-    }
-    return solver;
-  }
+    // Add equality constraints
+    addConstraints(model, variables);
 
-  private MPVariable @NotNull [] createVariables(@NotNull MPSolver solver) {
-    MPVariable[] variables = new MPVariable[numVariables];
-    for (int v = 0; v < numVariables; v++) {
-      variables[v] = solver.makeIntVar(0, INFINITY, "x" + v);
-    }
-    return variables;
-  }
+    // Minimize sum of all variables
+    configureObjective(variables);
 
-  private void addConstraints(@NotNull MPSolver solver, MPVariable[] variables) {
-    for (int c = 0; c < numConstraints; c++) {
-      MPConstraint constraint = solver.makeConstraint(targets[c], targets[c], "c" + c);
-      for (int v = 0; v < numVariables; v++) {
-        if (coefficients[c][v] != 0) {
-          constraint.setCoefficient(variables[v], coefficients[c][v]);
-        }
-      }
-    }
-  }
+    // Solve
+    Optimisation.Result result = model.minimise();
 
-  private void configureObjective(@NotNull MPSolver solver, MPVariable[] variables) {
-    MPObjective objective = solver.objective();
-    for (int v = 0; v < numVariables; v++) {
-      objective.setCoefficient(variables[v], 1);
-    }
-    objective.setMinimization();
-  }
-
-  private long solve(@NotNull MPSolver solver, MPVariable[] variables) {
-    MPSolver.ResultStatus status = solver.solve();
-
-    if (status == MPSolver.ResultStatus.OPTIMAL || status == MPSolver.ResultStatus.FEASIBLE) {
+    if (result.getState().isOptimal() || result.getState().isFeasible()) {
       long total = 0;
       for (int v = 0; v < numVariables; v++) {
-        total += Math.round(variables[v].solutionValue());
+        total += Math.round(result.get(v).doubleValue());
       }
       return total;
     }
 
     return Long.MAX_VALUE;
+  }
+
+  private Variable @NotNull [] createVariables(@NotNull ExpressionsBasedModel model) {
+    Variable[] variables = new Variable[numVariables];
+    for (int v = 0; v < numVariables; v++) {
+      variables[v] = model.newVariable("x" + v)
+          .lower(0)
+          .integer(true);
+    }
+    return variables;
+  }
+
+  private void addConstraints(@NotNull ExpressionsBasedModel model, Variable[] variables) {
+    for (int c = 0; c < numConstraints; c++) {
+      Expression constraint = model.newExpression("c" + c).level(targets[c]);
+      for (int v = 0; v < numVariables; v++) {
+        if (coefficients[c][v] != 0) {
+          constraint.set(variables[v], coefficients[c][v]);
+        }
+      }
+    }
+  }
+
+  private void configureObjective(Variable @NotNull [] variables) {
+    for (Variable variable : variables) {
+      variable.weight(1);
+    }
   }
 
   private boolean allTargetsZero() {
