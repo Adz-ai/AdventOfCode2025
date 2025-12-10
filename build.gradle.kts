@@ -29,6 +29,9 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.1.0-alpha1")
     runtimeOnly("ch.qos.logback:logback-classic:1.5.21")
 
+    // Google OR-Tools for Integer Linear Programming
+    implementation("com.google.ortools:ortools-java:9.14.6206")
+
     testImplementation(platform("org.junit:junit-bom:6.1.0-M1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

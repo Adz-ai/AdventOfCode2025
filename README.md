@@ -8,12 +8,13 @@ Java solutions for [Advent of Code 2025](https://adventofcode.com/2025)
 
 | Day | Time |
 |-----|------|
-| 1 | 7 ms |
-| 2 | 59 ms |
-| 3 | 7 ms |
+| 1 | 6 ms |
+| 2 | 52 ms |
+| 3 | 6 ms |
 | 4 | 29 ms |
-| 5 | 18 ms |
-| 6 | 17 ms |
-| 7 | 10 ms |
-| 8 | 64 ms |
-| 9 | 93 ms |
+| 5 | 17 ms |
+| 6 | 13 ms |
+| 7 | 9 ms |
+| 8 | 60 ms |
+| 9 | 87 ms |
+| 10 | 1.166 s |
