@@ -165,6 +165,11 @@ abstract class UpdateReadmeTask : DefaultTask() {
     @get:OutputFile
     abstract val readmeFile: RegularFileProperty
 
+    // Number of runs per day to find minimum time
+    private val runsPerDay = 10
+    // Number of warmup runs before timing
+    private val warmupRuns = 3
+
     init {
         // Always run this task - timing results vary between runs
         outputs.upToDateWhen { false }
@@ -172,36 +177,21 @@ abstract class UpdateReadmeTask : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val results = mutableListOf<Map<String, String>>()
         val cp = runtimeClasspath.asPath
+        println("Running solutions with $warmupRuns warmup + $runsPerDay timed runs each...")
+        println("Using parallel execution for faster benchmarking\n")
 
-        (1..12).forEach { day ->
-            val dayNum = "%02d".format(day)
-            val dayMainClass = "aoc.day$dayNum.Day$dayNum"
+        // Run all days in parallel using Java's parallel streams
+        val results = (1..12).toList().parallelStream()
+            .map { day -> runDay(day, cp) }
+            .filter { it != null }
+            .sorted(compareBy { it!!["day"]?.toInt() })
+            .toList()
+            .filterNotNull()
 
-            try {
-                val outputStream = ByteArrayOutputStream()
-                val process = ProcessBuilder("java", "-cp", cp, dayMainClass)
-                    .redirectErrorStream(true)
-                    .start()
-
-                process.inputStream.copyTo(outputStream)
-                val exitCode = process.waitFor()
-
-                if (exitCode == 0) {
-                    val outputText = outputStream.toString()
-                    val part1 = Regex("""Part 1: (\d+)""").find(outputText)?.groupValues?.get(1) ?: "-"
-                    val part2 = Regex("""Part 2: (\d+)""").find(outputText)?.groupValues?.get(1) ?: "-"
-                    val time = Regex("""Completed in (.+)""").find(outputText)?.groupValues?.get(1) ?: "-"
-
-                    results.add(mapOf("day" to day.toString(), "part1" to part1, "part2" to part2, "time" to time))
-                    println("Day $day: Part1=$part1, Part2=$part2, Time=$time")
-                } else {
-                    println("Day $day: Not implemented")
-                }
-            } catch (e: Exception) {
-                println("Day $day: Not implemented")
-            }
+        // Print results in order
+        results.forEach { result ->
+            println("Day ${result["day"]}: Part1=${result["part1"]}, Part2=${result["part2"]}, Time=${result["time"]}")
         }
 
         // Get machine specs
@@ -230,6 +220,88 @@ abstract class UpdateReadmeTask : DefaultTask() {
 
         readme.writeText(newContent)
         println("\nREADME.md updated with performance table")
+    }
+
+    private fun runDay(day: Int, cp: String): Map<String, String>? {
+        val dayNum = "%02d".format(day)
+        val dayMainClass = "aoc.day$dayNum.Day$dayNum"
+
+        try {
+            // Warmup runs (discard results)
+            repeat(warmupRuns) {
+                runOnce(cp, dayMainClass)
+            }
+
+            // Timed runs - collect minimum time
+            var minTimeMs = Long.MAX_VALUE
+            var part1 = "-"
+            var part2 = "-"
+
+            repeat(runsPerDay) {
+                val result = runOnce(cp, dayMainClass) ?: return null
+
+                val timeStr = result["time"] ?: return null
+                val timeMs = parseTimeToMs(timeStr)
+
+                if (timeMs < minTimeMs) {
+                    minTimeMs = timeMs
+                    part1 = result["part1"] ?: "-"
+                    part2 = result["part2"] ?: "-"
+                }
+            }
+
+            val formattedTime = formatTime(minTimeMs)
+            return mapOf(
+                "day" to day.toString(),
+                "part1" to part1,
+                "part2" to part2,
+                "time" to formattedTime
+            )
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
+    private fun runOnce(cp: String, dayMainClass: String): Map<String, String>? {
+        val outputStream = ByteArrayOutputStream()
+        val process = ProcessBuilder("java", "-cp", cp, dayMainClass)
+            .redirectErrorStream(true)
+            .start()
+
+        process.inputStream.copyTo(outputStream)
+        val exitCode = process.waitFor()
+
+        if (exitCode != 0) return null
+
+        val outputText = outputStream.toString()
+        val part1 = Regex("""Part 1: (\d+)""").find(outputText)?.groupValues?.get(1) ?: "-"
+        val part2 = Regex("""Part 2: (\d+)""").find(outputText)?.groupValues?.get(1) ?: "-"
+        val time = Regex("""Completed in (.+)""").find(outputText)?.groupValues?.get(1) ?: "-"
+
+        return mapOf("part1" to part1, "part2" to part2, "time" to time)
+    }
+
+    private fun parseTimeToMs(timeStr: String): Long {
+        // Parse times like "8 ms", "1.2 s", "150 ms"
+        val msMatch = Regex("""(\d+)\s*ms""").find(timeStr)
+        if (msMatch != null) {
+            return msMatch.groupValues[1].toLong()
+        }
+
+        val secMatch = Regex("""([\d.]+)\s*s""").find(timeStr)
+        if (secMatch != null) {
+            return (secMatch.groupValues[1].toDouble() * 1000).toLong()
+        }
+
+        return Long.MAX_VALUE
+    }
+
+    private fun formatTime(ms: Long): String {
+        return if (ms >= 1000) {
+            String.format("%.1f s", ms / 1000.0)
+        } else {
+            "$ms ms"
+        }
     }
 
     private fun getMachineSpecs(): String {
