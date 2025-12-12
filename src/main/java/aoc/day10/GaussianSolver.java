@@ -2,7 +2,6 @@ package aoc.day10;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -14,213 +13,164 @@ final class GaussianSolver {
 
   private static final double EPS = 1e-8;
 
-  private final int numVariables;
+  private final int numVars;
   private final int numConstraints;
-  private final double[][] coefficients;
-  private final double[] targets;
+
+  // Variable expressions: varCoeffs[v][i] * x[i] + varConstants[v] = x[v]
+  private final double[][] varCoeffs;
+  private final double[] varConstants;
+  private final boolean[] isFree;
   private final int[] upperBounds;
 
-  @Contract(pure = true)
-  private GaussianSolver(double[] @NotNull [] coefficients, double @NotNull [] targets, int[] upperBounds) {
-    this.coefficients = coefficients;
-    this.targets = targets;
-    this.numConstraints = targets.length;
-    this.numVariables = coefficients.length > 0 ? coefficients[0].length : 0;
+  private GaussianSolver(int numVars, int numConstraints, int[] upperBounds) {
+    this.numVars = numVars;
+    this.numConstraints = numConstraints;
     this.upperBounds = upperBounds;
+    this.varCoeffs = new double[numVars][numVars];
+    this.varConstants = new double[numVars];
+    this.isFree = new boolean[numVars];
+
+    // Initialize each variable as free: x[i] = 1*x[i] + 0
+    for (int i = 0; i < numVars; i++) {
+      varCoeffs[i][i] = 1.0;
+      isFree[i] = true;
+    }
   }
 
-  @Contract("_, _ -> new")
-  static @NotNull GaussianSolver create(int[][] intCoefficients, int @NotNull [] intTargets) {
-    int numConstraints = intTargets.length;
-    int numVariables = numConstraints > 0 && intCoefficients.length > 0
-        ? intCoefficients[0].length : 0;
+  static long solve(int[][] coefficients, int @NotNull [] targets) {
+    int numConstraints = targets.length;
+    if (numConstraints == 0 || coefficients.length == 0 || coefficients[0].length == 0) {
+      return allZero(targets) ? 0 : Long.MAX_VALUE;
+    }
 
-    var coefficients = new double[numConstraints][numVariables];
-    var targets = new double[numConstraints];
-    var upperBounds = new int[numVariables];
-    Arrays.fill(upperBounds, Integer.MAX_VALUE);
+    int numVars = coefficients[0].length;
+    var upperBounds = computeUpperBounds(coefficients, targets, numVars);
+    var solver = new GaussianSolver(numVars, numConstraints, upperBounds);
+
+    // Build equations and perform elimination
+    var eqCoeffs = new double[numConstraints][numVars];
+    var eqConstants = new double[numConstraints];
 
     for (int c = 0; c < numConstraints; c++) {
-      targets[c] = intTargets[c];
-      for (int v = 0; v < numVariables; v++) {
-        coefficients[c][v] = intCoefficients[c][v];
-        if (intCoefficients[c][v] != 0) {
-          upperBounds[v] = Math.min(upperBounds[v], intTargets[c]);
-        }
+      eqConstants[c] = -targets[c];
+      for (int v = 0; v < numVars; v++) {
+        eqCoeffs[c][v] = coefficients[c][v];
       }
     }
 
-    return new GaussianSolver(coefficients, targets, upperBounds);
+    solver.performElimination(eqCoeffs, eqConstants);
+    return solver.findMinimum();
   }
 
-  long solveMinSum() {
-    if (numVariables == 0) {
-      return allTargetsZero() ? 0 : Long.MAX_VALUE;
-    }
-
-    var variables = initializeVariables();
-    var equations = buildEquations();
-    performGaussianElimination(variables, equations);
-
-    int[] freeVarIndices = findFreeVariables(variables);
-    return enumerateSolutions(variables, freeVarIndices);
-  }
-
-  private Variable @NotNull [] initializeVariables() {
-    var variables = new Variable[numVariables];
-    for (int i = 0; i < numVariables; i++) {
-      variables[i] = Variable.free(i, numVariables, upperBounds[i]);
-    }
-    return variables;
-  }
-
-  private LinearExpr @NotNull [] buildEquations() {
-    var equations = new LinearExpr[numConstraints];
-    for (int c = 0; c < numConstraints; c++) {
-      equations[c] = new LinearExpr(coefficients[c].clone(), -targets[c]);
-    }
-    return equations;
-  }
-
-  private void performGaussianElimination(Variable[] variables, LinearExpr[] equations) {
-    for (int v = 0; v < numVariables; v++) {
-      for (var equation : equations) {
-        var extracted = equation.extractVariable(v);
-        if (extracted != null) {
-          variables[v] = Variable.dependent(extracted, upperBounds[v]);
-          substituteInAllEquations(equations, v, extracted);
-          break;
+  private static int @NotNull [] computeUpperBounds(int[][] coefficients, int @NotNull [] targets, int numVars) {
+    var bounds = new int[numVars];
+    Arrays.fill(bounds, Integer.MAX_VALUE);
+    for (int c = 0; c < targets.length; c++) {
+      for (int v = 0; v < numVars; v++) {
+        if (coefficients[c][v] != 0) {
+          bounds[v] = Math.min(bounds[v], targets[c]);
         }
+      }
+    }
+    return bounds;
+  }
+
+  @Contract(pure = true)
+  private static boolean allZero(int @NotNull [] arr) {
+    for (int val : arr) {
+      if (val != 0) return false;
+    }
+    return true;
+  }
+
+  private void performElimination(double[][] eqCoeffs, double[] eqConstants) {
+    for (int v = 0; v < numVars; v++) {
+      for (int e = 0; e < numConstraints; e++) {
+        double pivot = -eqCoeffs[e][v];
+        if (Math.abs(pivot) < EPS) continue;
+
+        // Extract: x[v] = (constant + sum(coeff[i]*x[i] for i!=v)) / pivot
+        isFree[v] = false;
+        varConstants[v] = eqConstants[e] / pivot;
+        for (int i = 0; i < numVars; i++) {
+          varCoeffs[v][i] = (i == v) ? 0 : eqCoeffs[e][i] / pivot;
+        }
+
+        // Substitute into all equations
+        for (int j = 0; j < numConstraints; j++) {
+          double coeff = eqCoeffs[j][v];
+          if (Math.abs(coeff) < EPS) continue;
+
+          eqCoeffs[j][v] = 0;
+          for (int i = 0; i < numVars; i++) {
+            eqCoeffs[j][i] += coeff * varCoeffs[v][i];
+          }
+          eqConstants[j] += coeff * varConstants[v];
+        }
+        break;
       }
     }
   }
 
-  private void substituteInAllEquations(LinearExpr @NotNull [] equations, int varIndex, LinearExpr expr) {
-    for (int i = 0; i < equations.length; i++) {
-      equations[i] = equations[i].substitute(varIndex, expr);
+  private long findMinimum() {
+    // Collect free variable indices
+    int freeCount = 0;
+    for (int i = 0; i < numVars; i++) {
+      if (isFree[i]) freeCount++;
     }
+
+    var freeVars = new int[freeCount];
+    int idx = 0;
+    for (int i = 0; i < numVars; i++) {
+      if (isFree[i]) freeVars[idx++] = i;
+    }
+
+    return enumerate(freeVars, 0, new int[numVars], Long.MAX_VALUE);
   }
 
-  private int[] findFreeVariables(Variable[] variables) {
-    return java.util.stream.IntStream.range(0, numVariables)
-        .filter(i -> variables[i].isFree())
-        .toArray();
-  }
-
-  private long enumerateSolutions(Variable[] variables, int[] freeVarIndices) {
-    return enumerate(variables, freeVarIndices, 0, new int[numVariables]);
-  }
-
-  private long enumerate(Variable[] variables, int @NotNull [] freeVars, int depth, int[] values) {
+  private long enumerate(int @NotNull [] freeVars, int depth, int[] values, long bestSoFar) {
     if (depth == freeVars.length) {
-      return evaluateSolution(variables, values);
+      return evaluate(values);
     }
 
     int varIdx = freeVars[depth];
-    long best = Long.MAX_VALUE;
+    int bound = upperBounds[varIdx];
+    long best = bestSoFar;
 
-    for (int x = 0; x <= variables[varIdx].upperBound(); x++) {
+    for (int x = 0; x <= bound; x++) {
       values[varIdx] = x;
-      best = Math.min(best, enumerate(variables, freeVars, depth + 1, values));
+      long result = enumerate(freeVars, depth + 1, values, best);
+      if (result < best) {
+        best = result;
+      }
     }
-
     return best;
   }
 
-  private long evaluateSolution(Variable @NotNull [] variables, int[] values) {
+  private long evaluate(int[] values) {
     long total = 0;
-    for (int i = variables.length - 1; i >= 0; i--) {
-      double x = variables[i].evaluate(values);
-      if (!isValidNonNegativeInteger(x)) {
-        return Long.MAX_VALUE;
-      }
-      values[i] = (int) Math.round(x);
-      total += values[i];
-    }
-    return total;
-  }
 
-  private boolean isValidNonNegativeInteger(double x) {
-    return x >= -EPS && Math.abs(x - Math.round(x)) <= EPS;
-  }
-
-  private boolean allTargetsZero() {
-    return Arrays.stream(targets).allMatch(t -> Math.abs(t) <= EPS);
-  }
-
-  /**
-   * Represents a linear expression: sum(coeffs[i] * x[i]) + constant.
-   */
-  private record LinearExpr(double[] coeffs, double constant) {
-
-    LinearExpr {
-      coeffs = coeffs.clone();
-    }
-
-    /**
-     * Extracts variable v from this equation, expressing it in terms of other variables.
-     * Returns null if coefficient of v is zero.
-     */
-    @Nullable LinearExpr extractVariable(int v) {
-      double coeff = -coeffs[v];
-      if (Math.abs(coeff) < EPS) {
-        return null;
-      }
-
-      var newCoeffs = new double[coeffs.length];
-      for (int i = 0; i < coeffs.length; i++) {
-        if (i != v) {
-          newCoeffs[i] = coeffs[i] / coeff;
+    // Evaluate variables in reverse order (dependent vars may reference later free vars)
+    for (int i = numVars - 1; i >= 0; i--) {
+      double x;
+      if (isFree[i]) {
+        x = values[i];
+      } else {
+        x = varConstants[i];
+        var coeffs = varCoeffs[i];
+        for (int j = 0; j < numVars; j++) {
+          x += coeffs[j] * values[j];
         }
       }
-      return new LinearExpr(newCoeffs, constant / coeff);
+
+      // Validate: must be non-negative integer
+      if (x < -EPS) return Long.MAX_VALUE;
+      long rounded = Math.round(x);
+      if (Math.abs(x - rounded) > EPS) return Long.MAX_VALUE;
+
+      values[i] = (int) rounded;
+      total += rounded;
     }
-
-    /**
-     * Substitutes variable v with the given expression.
-     */
-    LinearExpr substitute(int v, LinearExpr expr) {
-      double coeff = coeffs[v];
-      if (Math.abs(coeff) < EPS) {
-        return this;
-      }
-
-      var newCoeffs = coeffs.clone();
-      newCoeffs[v] = 0;
-      for (int i = 0; i < coeffs.length; i++) {
-        newCoeffs[i] += coeff * expr.coeffs[i];
-      }
-      return new LinearExpr(newCoeffs, constant + coeff * expr.constant);
-    }
-
-    double evaluate(int[] values) {
-      double result = constant;
-      for (int i = 0; i < coeffs.length; i++) {
-        result += coeffs[i] * values[i];
-      }
-      return result;
-    }
-  }
-
-  /**
-   * Represents a variable that is either free or expressed as a linear combination of free variables.
-   */
-  private record Variable(LinearExpr expr, boolean isFree, int upperBound) {
-
-    @Contract("_, _, _ -> new")
-    static @NotNull Variable free(int index, int numVars, int upperBound) {
-      var coeffs = new double[numVars];
-      coeffs[index] = 1;
-      return new Variable(new LinearExpr(coeffs, 0), true, upperBound);
-    }
-
-    @Contract("_, _ -> new")
-    static @NotNull Variable dependent(LinearExpr expr, int upperBound) {
-      return new Variable(expr, false, upperBound);
-    }
-
-    double evaluate(int[] values) {
-      return expr.evaluate(values);
-    }
+    return total;
   }
 }

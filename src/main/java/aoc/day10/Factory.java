@@ -159,8 +159,7 @@ final class Factory {
         }
       }
 
-      GaussianSolver solver = GaussianSolver.create(coefficients, joltageTargets);
-      return solver.solveMinSum();
+      return GaussianSolver.solve(coefficients, joltageTargets);
     }
   }
 }
