@@ -49,6 +49,8 @@
         <exclude name="UseUtilityClass"/>
         <!-- Arbitrary limit that doesn't account for simple methods -->
         <exclude name="TooManyMethods"/>
+        <!-- Mathematical/algorithmic solvers are inherently cohesive despite metrics -->
+        <exclude name="GodClass"/>
     </rule>
 
     <rule ref="category/java/errorprone.xml">

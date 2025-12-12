@@ -1,9 +1,8 @@
 package aoc.day10;
 
+import java.util.Arrays;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 /**
  * Gaussian elimination solver with recursive enumeration for free variables.
@@ -19,7 +18,7 @@ final class GaussianSolver {
   // Variable expressions: varCoeffs[v][i] * x[i] + varConstants[v] = x[v]
   private final double[][] varCoeffs;
   private final double[] varConstants;
-  private final boolean[] isFree;
+  private final boolean[] freeFlags;
   private final int[] upperBounds;
 
   private GaussianSolver(int numVars, int numConstraints, int[] upperBounds) {
@@ -28,12 +27,12 @@ final class GaussianSolver {
     this.upperBounds = upperBounds;
     this.varCoeffs = new double[numVars][numVars];
     this.varConstants = new double[numVars];
-    this.isFree = new boolean[numVars];
+    this.freeFlags = new boolean[numVars];
 
     // Initialize each variable as free: x[i] = 1*x[i] + 0
     for (int i = 0; i < numVars; i++) {
       varCoeffs[i][i] = 1.0;
-      isFree[i] = true;
+      freeFlags[i] = true;
     }
   }
 
@@ -62,7 +61,8 @@ final class GaussianSolver {
     return solver.findMinimum();
   }
 
-  private static int @NotNull [] computeUpperBounds(int[][] coefficients, int @NotNull [] targets, int numVars) {
+  private static int @NotNull [] computeUpperBounds(
+      int[][] coefficients, int @NotNull [] targets, int numVars) {
     var bounds = new int[numVars];
     Arrays.fill(bounds, Integer.MAX_VALUE);
     for (int c = 0; c < targets.length; c++) {
@@ -78,54 +78,85 @@ final class GaussianSolver {
   @Contract(pure = true)
   private static boolean allZero(int @NotNull [] arr) {
     for (int val : arr) {
-      if (val != 0) return false;
+      if (val != 0) {
+        return false;
+      }
     }
     return true;
   }
 
   private void performElimination(double[][] eqCoeffs, double[] eqConstants) {
     for (int v = 0; v < numVars; v++) {
-      for (int e = 0; e < numConstraints; e++) {
-        double pivot = -eqCoeffs[e][v];
-        if (Math.abs(pivot) < EPS) continue;
+      eliminateVariable(v, eqCoeffs, eqConstants);
+    }
+  }
 
-        // Extract: x[v] = (constant + sum(coeff[i]*x[i] for i!=v)) / pivot
-        isFree[v] = false;
-        varConstants[v] = eqConstants[e] / pivot;
-        for (int i = 0; i < numVars; i++) {
-          varCoeffs[v][i] = (i == v) ? 0 : eqCoeffs[e][i] / pivot;
-        }
+  private void eliminateVariable(int v, double[][] eqCoeffs, double[] eqConstants) {
+    int pivotRow = findPivotRow(v, eqCoeffs);
+    if (pivotRow < 0) {
+      return;
+    }
 
-        // Substitute into all equations
-        for (int j = 0; j < numConstraints; j++) {
-          double coeff = eqCoeffs[j][v];
-          if (Math.abs(coeff) < EPS) continue;
+    double pivot = -eqCoeffs[pivotRow][v];
+    extractVariable(v, pivotRow, pivot, eqCoeffs, eqConstants);
+    substituteInEquations(v, eqCoeffs, eqConstants);
+  }
 
-          eqCoeffs[j][v] = 0;
-          for (int i = 0; i < numVars; i++) {
-            eqCoeffs[j][i] += coeff * varCoeffs[v][i];
-          }
-          eqConstants[j] += coeff * varConstants[v];
-        }
-        break;
+  private int findPivotRow(int v, double[][] eqCoeffs) {
+    for (int e = 0; e < numConstraints; e++) {
+      if (Math.abs(eqCoeffs[e][v]) >= EPS) {
+        return e;
       }
+    }
+    return -1;
+  }
+
+  private void extractVariable(int v, int e, double pivot,
+                               double[][] eqCoeffs, double[] eqConstants) {
+    freeFlags[v] = false;
+    varConstants[v] = eqConstants[e] / pivot;
+    for (int i = 0; i < numVars; i++) {
+      varCoeffs[v][i] = (i == v) ? 0 : eqCoeffs[e][i] / pivot;
+    }
+  }
+
+  private void substituteInEquations(int v, double[][] eqCoeffs, double[] eqConstants) {
+    for (int j = 0; j < numConstraints; j++) {
+      double coeff = eqCoeffs[j][v];
+      if (Math.abs(coeff) < EPS) {
+        continue;
+      }
+
+      eqCoeffs[j][v] = 0;
+      for (int i = 0; i < numVars; i++) {
+        eqCoeffs[j][i] += coeff * varCoeffs[v][i];
+      }
+      eqConstants[j] += coeff * varConstants[v];
     }
   }
 
   private long findMinimum() {
-    // Collect free variable indices
+    int[] freeVars = collectFreeVariables();
+    return enumerate(freeVars, 0, new int[numVars], Long.MAX_VALUE);
+  }
+
+  private int[] collectFreeVariables() {
     int freeCount = 0;
     for (int i = 0; i < numVars; i++) {
-      if (isFree[i]) freeCount++;
+      if (freeFlags[i]) {
+        freeCount++;
+      }
     }
 
     var freeVars = new int[freeCount];
     int idx = 0;
     for (int i = 0; i < numVars; i++) {
-      if (isFree[i]) freeVars[idx++] = i;
+      if (freeFlags[i]) {
+        freeVars[idx] = i;
+        idx++;
+      }
     }
-
-    return enumerate(freeVars, 0, new int[numVars], Long.MAX_VALUE);
+    return freeVars;
   }
 
   private long enumerate(int @NotNull [] freeVars, int depth, int[] values, long bestSoFar) {
@@ -152,25 +183,33 @@ final class GaussianSolver {
 
     // Evaluate variables in reverse order (dependent vars may reference later free vars)
     for (int i = numVars - 1; i >= 0; i--) {
-      double x;
-      if (isFree[i]) {
-        x = values[i];
-      } else {
-        x = varConstants[i];
-        var coeffs = varCoeffs[i];
-        for (int j = 0; j < numVars; j++) {
-          x += coeffs[j] * values[j];
-        }
-      }
+      double x = computeVariableValue(i, values);
 
       // Validate: must be non-negative integer
-      if (x < -EPS) return Long.MAX_VALUE;
+      if (x < -EPS) {
+        return Long.MAX_VALUE;
+      }
       long rounded = Math.round(x);
-      if (Math.abs(x - rounded) > EPS) return Long.MAX_VALUE;
+      if (Math.abs(x - rounded) > EPS) {
+        return Long.MAX_VALUE;
+      }
 
       values[i] = (int) rounded;
       total += rounded;
     }
     return total;
+  }
+
+  private double computeVariableValue(int i, int[] values) {
+    if (freeFlags[i]) {
+      return values[i];
+    }
+
+    double x = varConstants[i];
+    var coeffs = varCoeffs[i];
+    for (int j = 0; j < numVars; j++) {
+      x += coeffs[j] * values[j];
+    }
+    return x;
   }
 }
