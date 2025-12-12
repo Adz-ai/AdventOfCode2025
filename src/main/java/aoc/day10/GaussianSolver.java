@@ -112,7 +112,7 @@ final class GaussianSolver {
   }
 
   private void extractVariable(int v, int e, double pivot,
-                               double[][] eqCoeffs, double[] eqConstants) {
+                               double[][] eqCoeffs, double @NotNull [] eqConstants) {
     freeFlags[v] = false;
     varConstants[v] = eqConstants[e] / pivot;
     for (int i = 0; i < numVars; i++) {
@@ -140,7 +140,8 @@ final class GaussianSolver {
     return enumerate(freeVars, 0, new int[numVars], Long.MAX_VALUE);
   }
 
-  private int[] collectFreeVariables() {
+  @Contract(pure = true)
+  private int @NotNull [] collectFreeVariables() {
     int freeCount = 0;
     for (int i = 0; i < numVars; i++) {
       if (freeFlags[i]) {
