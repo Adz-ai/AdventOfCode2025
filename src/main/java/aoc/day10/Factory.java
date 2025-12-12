@@ -159,7 +159,7 @@ final class Factory {
         }
       }
 
-      IlpSolver solver = IlpSolver.create(coefficients, joltageTargets);
+      GaussianSolver solver = GaussianSolver.create(coefficients, joltageTargets);
       return solver.solveMinSum();
     }
   }
