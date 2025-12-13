@@ -232,8 +232,8 @@ abstract class UpdateReadmeTask : DefaultTask() {
                 runOnce(cp, dayMainClass)
             }
 
-            // Timed runs - collect minimum time
-            var minTimeMs = Long.MAX_VALUE
+            // Timed runs - collect minimum time (in microseconds)
+            var minTimeUs = Long.MAX_VALUE
             var part1 = "-"
             var part2 = "-"
 
@@ -241,16 +241,16 @@ abstract class UpdateReadmeTask : DefaultTask() {
                 val result = runOnce(cp, dayMainClass) ?: return null
 
                 val timeStr = result["time"] ?: return null
-                val timeMs = parseTimeToMs(timeStr)
+                val timeUs = parseTimeToUs(timeStr)
 
-                if (timeMs < minTimeMs) {
-                    minTimeMs = timeMs
+                if (timeUs < minTimeUs) {
+                    minTimeUs = timeUs
                     part1 = result["part1"] ?: "-"
                     part2 = result["part2"] ?: "-"
                 }
             }
 
-            val formattedTime = formatTime(minTimeMs)
+            val formattedTime = formatTime(minTimeUs)
             return mapOf(
                 "day" to day.toString(),
                 "part1" to part1,
@@ -274,33 +274,44 @@ abstract class UpdateReadmeTask : DefaultTask() {
         if (exitCode != 0) return null
 
         val outputText = outputStream.toString()
-        val part1 = Regex("""Part 1: (\d+)""").find(outputText)?.groupValues?.get(1) ?: "-"
+        // Handle both two-part and single-part solutions
+        val part1 = Regex("""Part 1: (\d+)""").find(outputText)?.groupValues?.get(1)
+            ?: Regex("""Result: (\d+)""").find(outputText)?.groupValues?.get(1)
+            ?: "-"
         val part2 = Regex("""Part 2: (\d+)""").find(outputText)?.groupValues?.get(1) ?: "-"
         val time = Regex("""Completed in (.+)""").find(outputText)?.groupValues?.get(1) ?: "-"
 
         return mapOf("part1" to part1, "part2" to part2, "time" to time)
     }
 
-    private fun parseTimeToMs(timeStr: String): Long {
-        // Parse times like "8 ms", "1.2 s", "150 ms"
+    private fun parseTimeToUs(timeStr: String): Long {
+        // Parse times like "8 ms", "1.2 s", "150 µs" - returns microseconds
+        val usMatch = Regex("""(\d+)\s*µs""").find(timeStr)
+        if (usMatch != null) {
+            // Store microseconds as fractional milliseconds (multiply by 1000 to preserve precision)
+            return usMatch.groupValues[1].toLong()  // Keep as µs for comparison
+        }
+
         val msMatch = Regex("""(\d+)\s*ms""").find(timeStr)
         if (msMatch != null) {
-            return msMatch.groupValues[1].toLong()
+            return msMatch.groupValues[1].toLong() * 1000  // Convert to µs for comparison
         }
 
         val secMatch = Regex("""([\d.]+)\s*s""").find(timeStr)
         if (secMatch != null) {
-            return (secMatch.groupValues[1].toDouble() * 1000).toLong()
+            return (secMatch.groupValues[1].toDouble() * 1_000_000).toLong()  // Convert to µs
         }
 
         return Long.MAX_VALUE
     }
 
-    private fun formatTime(ms: Long): String {
-        return if (ms >= 1000) {
-            String.format("%.1f s", ms / 1000.0)
-        } else {
-            "$ms ms"
+    private fun formatTime(us: Long): String {
+        // Input is in microseconds, always output in milliseconds for consistency
+        val ms = us / 1000.0
+        return when {
+            ms >= 1000 -> String.format("%.1f s", ms / 1000.0)
+            ms >= 1 -> String.format("%.0f ms", ms)
+            else -> String.format("%.2f ms", ms)
         }
     }
 

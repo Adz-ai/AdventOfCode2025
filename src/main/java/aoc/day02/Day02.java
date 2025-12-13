@@ -2,6 +2,7 @@ package aoc.day02;
 
 import aoc.util.FileUtils;
 import aoc.util.SolutionRunner;
+import aoc.util.SolutionRunner.Results;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -22,20 +23,16 @@ class Day02 {
   };
 
   void main() {
-    SolutionRunner.run(LOG, log -> {
-      try {
-        var inputString = FileUtils.readAsString("day02/input");
-        var ranges = Arrays.stream(inputString.split(","))
-            .map(Range::parse)
-            .toList();
+    try {
+      var inputString = FileUtils.readAsString("day02/input");
+      var ranges = Arrays.stream(inputString.split(","))
+          .map(Range::parse)
+          .toList();
 
-        log.info("Part 1: {}", part1(ranges));
-        log.info("Part 2: {}", part2(ranges));
-
-      } catch (IOException e) {
-        log.error("Error reading input", e);
-      }
-    });
+      SolutionRunner.run(LOG, () -> new Results(part1(ranges), part2(ranges)));
+    } catch (IOException e) {
+      LOG.error("Error reading input", e);
+    }
   }
 
   long part1(List<Range> ranges) {

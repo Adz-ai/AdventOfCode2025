@@ -11,14 +11,12 @@ class Day12 {
   private static final Logger LOG = LoggerFactory.getLogger(Day12.class);
 
   void main() {
-    SolutionRunner.run(LOG, log -> {
-      try {
-        var lines = FileUtils.readLines("day12/input.txt");
-        var farm = ChristmasTreeFarm.parse(lines);
-        log.info("Part 1: {}", farm.countFittingRegions());
-      } catch (IOException e) {
-        log.error("Error reading input", e);
-      }
-    });
+    try {
+      var lines = FileUtils.readLines("day12/input.txt");
+      var farm = ChristmasTreeFarm.parse(lines);
+      SolutionRunner.runSingle(LOG, farm::countFittingRegions);
+    } catch (IOException e) {
+      LOG.error("Error reading input", e);
+    }
   }
 }

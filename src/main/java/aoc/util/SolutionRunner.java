@@ -1,10 +1,13 @@
 package aoc.util;
 
 import java.time.Duration;
-import java.time.Instant;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+/**
+ * Utility for running and timing Advent of Code solutions.
+ */
 public final class SolutionRunner {
 
   private static final long NANOS_PER_MICROSECOND = 1000;
@@ -15,13 +18,36 @@ public final class SolutionRunner {
   private SolutionRunner() {
   }
 
-  public static void run(Logger log, @NotNull Solution solution) {
-    var start = Instant.now();
+  /**
+   * Runs and times a solution that returns results to be logged after timing.
+   *
+   * @param log the logger to use
+   * @param solution supplier that computes and returns results
+   */
+  public static void run(@NotNull Logger log, @NotNull Supplier<Results> solution) {
+    long start = System.nanoTime();
+    var results = solution.get();
+    long elapsed = System.nanoTime() - start;
 
-    solution.solve(log);
+    // Log results after timing
+    log.info("Part 1: {}", results.part1());
+    log.info("Part 2: {}", results.part2());
+    log.info("Completed in {}", formatDuration(Duration.ofNanos(elapsed)));
+  }
 
-    var elapsed = Duration.between(start, Instant.now());
-    log.info("Completed in {}", formatDuration(elapsed));
+  /**
+   * Runs and times a single-part solution.
+   *
+   * @param log the logger to use
+   * @param solution supplier that computes and returns the result
+   */
+  public static void runSingle(@NotNull Logger log, @NotNull Supplier<Object> solution) {
+    long start = System.nanoTime();
+    var result = solution.get();
+    long elapsed = System.nanoTime() - start;
+
+    log.info("Result: {}", result);
+    log.info("Completed in {}", formatDuration(Duration.ofNanos(elapsed)));
   }
 
   private static @NotNull String formatDuration(@NotNull Duration duration) {
@@ -34,8 +60,9 @@ public final class SolutionRunner {
     }
   }
 
-  @FunctionalInterface
-  public interface Solution {
-    void solve(Logger log);
+  /**
+   * Results from a two-part solution.
+   */
+  public record Results(Object part1, Object part2) {
   }
 }

@@ -2,6 +2,7 @@ package aoc.day01;
 
 import aoc.util.FileUtils;
 import aoc.util.SolutionRunner;
+import aoc.util.SolutionRunner.Results;
 import java.io.IOException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -23,18 +24,15 @@ class Day01 {
    * Runs the Day 1 solution.
    */
   void main() {
-    SolutionRunner.run(LOG, log -> {
-      try {
-        var lines = FileUtils.readLines("day01/input");
+    try {
+      var lines = FileUtils.readLines("day01/input");
+      SolutionRunner.run(LOG, () -> {
         var lock = runSimulation(lines);
-
-        log.info("Part 1: {}", lock.getEndOfRotationZeroCount());
-        log.info("Part 2: {}", lock.getZeroHitCount());
-
-      } catch (IOException e) {
-        log.error("Error reading input", e);
-      }
-    });
+        return new Results(lock.getEndOfRotationZeroCount(), lock.getZeroHitCount());
+      });
+    } catch (IOException e) {
+      LOG.error("Error reading input", e);
+    }
   }
 
   /**

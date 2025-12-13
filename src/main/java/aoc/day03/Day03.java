@@ -2,6 +2,7 @@ package aoc.day03;
 
 import aoc.util.FileUtils;
 import aoc.util.SolutionRunner;
+import aoc.util.SolutionRunner.Results;
 import java.io.IOException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +26,15 @@ public class Day03 {
    * Runs the Day 3 solution.
    */
   void main() {
-    SolutionRunner.run(LOG, log -> {
-      try {
-        var lines = FileUtils.readLines("day03/input");
-        log.info("Part 1: {}", totalOutputJoltage(lines, 2));
-        log.info("Part 2: {}", totalOutputJoltage(lines, PART2_DIGITS));
-      } catch (IOException e) {
-        log.error("Error reading input", e);
-      }
-    });
+    try {
+      var lines = FileUtils.readLines("day03/input");
+      SolutionRunner.run(LOG, () -> new Results(
+          totalOutputJoltage(lines, 2),
+          totalOutputJoltage(lines, PART2_DIGITS)
+      ));
+    } catch (IOException e) {
+      LOG.error("Error reading input", e);
+    }
   }
 
   /**
@@ -44,9 +45,11 @@ public class Day03 {
    * @return the sum of maximum joltages from all banks
    */
   long totalOutputJoltage(@NotNull List<String> lines, int digitCount) {
-    return lines.stream()
-        .mapToLong(bank -> maxJoltage(bank, digitCount))
-        .sum();
+    long sum = 0;
+    for (String line : lines) {
+      sum += maxJoltage(line, digitCount);
+    }
+    return sum;
   }
 
   /**
