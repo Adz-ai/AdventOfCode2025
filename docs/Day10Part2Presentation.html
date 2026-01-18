@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10 Part 2 - Presentation</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a0f;
+            color: #e8e8e8;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ============ SLIDE CONTAINER ============ */
+        .presentation {
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateX(50px);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        .slide.exit {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+
+        /* ============ BACKGROUNDS ============ */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+
+        .slide.bg-gradient::before {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .slide.bg-dark::before {
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 100%);
+        }
+
+        .slide.bg-problem::before {
+            background: linear-gradient(135deg, #2d1f3d 0%, #1a1a2e 100%);
+        }
+
+        .slide.bg-solution::before {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+        }
+
+        .slide.bg-success::before {
+            background: linear-gradient(135deg, #134e4a 0%, #1a1a2e 100%);
+        }
+
+        /* ============ TYPOGRAPHY ============ */
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d9ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #00d9ff;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #00ff88;
+        }
+
+        p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            max-width: 900px;
+            text-align: center;
+            color: #b8b8b8;
+        }
+
+        .subtitle {
+            font-size: 1.6rem;
+            color: #888;
+            margin-bottom: 40px;
+        }
+
+        .highlight {
+            color: #00d9ff;
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        .highlight-gold {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        /* ============ NAVIGATION ============ */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            font-size: 1rem;
+            border: 2px solid rgba(0, 217, 255, 0.5);
+            background: rgba(0, 0, 0, 0.5);
+            color: #00d9ff;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: #00d9ff;
+            color: #0a0a0f;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            transition: width 0.5s ease;
+            z-index: 1000;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-size: 1rem;
+            color: #666;
+            z-index: 1000;
+        }
+
+        /* ============ ANIMATIONS ============ */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .slide.active .fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in.delay-1 { transition-delay: 0.2s; }
+        .fade-in.delay-2 { transition-delay: 0.4s; }
+        .fade-in.delay-3 { transition-delay: 0.6s; }
+        .fade-in.delay-4 { transition-delay: 0.8s; }
+        .fade-in.delay-5 { transition-delay: 1s; }
+
+        /* ============ COMPONENTS ============ */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 12px;
+            padding: 25px 35px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 1.1rem;
+            margin: 20px 0;
+            text-align: left;
+            max-width: 900px;
+            line-height: 1.6;
+        }
+
+        .problem-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 30px 40px;
+            border-left: 4px solid #00d9ff;
+            max-width: 950px;
+            text-align: left;
+            font-size: 1.15rem;
+            line-height: 1.8;
+        }
+
+        .problem-box code {
+            background: rgba(0, 217, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            color: #00d9ff;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ============ KEYWORD HIGHLIGHTING ============ */
+        .keyword {
+            position: relative;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: default;
+            transition: all 0.3s;
+        }
+
+        .keyword::after {
+            content: attr(data-hint);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: #1a1a2e;
+            border: 1px solid;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .keyword:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .keyword.var {
+            background: rgba(0, 217, 255, 0.2);
+            border-bottom: 2px solid #00d9ff;
+        }
+        .keyword.var::after { border-color: #00d9ff; color: #00d9ff; }
+
+        .keyword.constraint {
+            background: rgba(0, 255, 136, 0.2);
+            border-bottom: 2px solid #00ff88;
+        }
+        .keyword.constraint::after { border-color: #00ff88; color: #00ff88; }
+
+        .keyword.objective {
+            background: rgba(255, 215, 0, 0.2);
+            border-bottom: 2px solid #ffd700;
+        }
+        .keyword.objective::after { border-color: #ffd700; color: #ffd700; }
+
+        .keyword.linear {
+            background: rgba(255, 107, 129, 0.2);
+            border-bottom: 2px solid #ff6b81;
+        }
+        .keyword.linear::after { border-color: #ff6b81; color: #ff6b81; }
+
+        .keyword-legend {
+            display: flex;
+            gap: 30px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .keyword-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .keyword-legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        /* ============ MATRIX ============ */
+        .matrix-container {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .matrix {
+            display: inline-flex;
+            flex-direction: column;
+            position: relative;
+            padding: 15px 25px;
+        }
+
+        .matrix::before, .matrix::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 12px;
+            border: 3px solid #00d9ff;
+        }
+
+        .matrix::before {
+            left: 0;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .matrix::after {
+            right: 0;
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .matrix-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .matrix-cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4rem;
+        }
+
+        .matrix-symbol {
+            font-size: 2rem;
+            color: #00d9ff;
+            padding: 0 10px;
+        }
+
+        .vector {
+            display: inline-flex;
+            flex-direction: column;
+            position: relative;
+            padding: 15px 20px;
+        }
+
+        .vector::before, .vector::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            border: 3px solid #00ff88;
+        }
+
+        .vector::before {
+            left: 0;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .vector::after {
+            right: 0;
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .vector-cell {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4rem;
+            padding: 0 15px;
+        }
+
+        /* ============ ELIMINATION STEPS ============ */
+        .elimination-container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .elim-step {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 20px;
+            border-left: 4px solid #333;
+            transition: all 0.3s;
+            opacity: 0.4;
+        }
+
+        .elim-step.active {
+            opacity: 1;
+            border-left-color: #00d9ff;
+            background: rgba(0, 217, 255, 0.05);
+        }
+
+        .elim-step.complete {
+            opacity: 1;
+            border-left-color: #00ff88;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #00d9ff;
+            margin-bottom: 15px;
+        }
+
+        .equation-box {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            margin: 8px 0;
+            display: inline-block;
+        }
+
+        .step-explanation {
+            color: #999;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: #00d9ff;
+            transform: scale(1.2);
+        }
+
+        .step-dot.complete {
+            background: #00ff88;
+        }
+
+        .elim-hint {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #888;
+        }
+
+        .elim-hint kbd {
+            background: rgba(255,255,255,0.15);
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+
+        /* ============ 3D VISUALIZATION ============ */
+        .viz-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .canvas-3d {
+            width: 450px;
+            height: 350px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: block;
+        }
+
+        .viz-info {
+            min-width: 300px;
+        }
+
+        .viz-equation {
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 3px solid #00d9ff;
+            transition: all 0.3s;
+        }
+
+        .viz-equation.solved {
+            border-left-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .viz-solution {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .viz-solution .total {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .demo-btn {
+            padding: 12px 25px;
+            border: 2px solid #00d9ff;
+            background: transparent;
+            color: #00d9ff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            margin: 5px;
+        }
+
+        .demo-btn:hover {
+            background: #00d9ff;
+            color: #0a0a0f;
+        }
+
+        /* ============ ANSWER BUILD-UP ============ */
+        .machine-sum {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 700px;
+            margin: 20px 0;
+        }
+
+        .machine-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 25px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            font-family: 'Fira Code', monospace;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .machine-row.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .machine-row .label {
+            color: #888;
+            min-width: 120px;
+        }
+
+        .machine-row .value {
+            color: #00ff88;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .machine-row.total {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+        }
+
+        .machine-row.total .value {
+            color: #ffd700;
+            font-size: 1.8rem;
+        }
+
+        .big-answer {
+            font-size: 6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ============ BULLET LIST ============ */
+        .bullet-list {
+            text-align: left;
+            max-width: 800px;
+        }
+
+        .bullet-list li {
+            font-size: 1.3rem;
+            line-height: 2;
+            margin-bottom: 15px;
+            list-style: none;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .bullet-list li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: #00d9ff;
+            font-weight: bold;
+        }
+
+        /* ============ TITLE DECORATIONS ============ */
+        .title-decoration {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .title-decoration.left {
+            left: -200px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .title-decoration.right {
+            right: -200px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation-delay: -3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.1); }
+        }
+
+        .keyboard-hints {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-size: 0.9rem;
+            color: #555;
+            z-index: 1000;
+        }
+
+        kbd {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin: 0 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 11</div>
+
+    <div class="presentation" id="presentation">
+
+        <!-- SLIDE 1: Title -->
+        <div class="slide bg-gradient active" data-slide="0">
+            <div class="title-decoration left"></div>
+            <div class="title-decoration right"></div>
+            <h1 class="fade-in">Day 10 Part 2</h1>
+            <p class="subtitle fade-in delay-1">Solving the Joltage Counter Puzzle</p>
+            <p class="fade-in delay-2" style="margin-top: 60px; color: #666;">
+                Press <kbd>Space</kbd> or <kbd>→</kbd> to continue
+            </p>
+        </div>
+
+        <!-- SLIDE 2: The Actual Problem Statement -->
+        <div class="slide bg-dark" data-slide="1">
+            <h2 class="fade-in">The Problem (Part 2)</h2>
+
+            <div class="problem-box fade-in delay-1">
+                <p style="margin-bottom: 15px;">
+                    Each machine has <strong>numeric counters</strong> tracking joltage levels, all initially set to <strong>zero</strong>.
+                </p>
+                <p style="margin-bottom: 15px;">
+                    Joltage requirements like <code>{3,5,4,7}</code> mean the goal is to configure the first counter to 3, the second to 5, the third to 4, and the fourth to 7.
+                </p>
+                <p style="margin-bottom: 15px;">
+                    Each <strong>button press increases</strong> the listed counters by <strong>1</strong>. A button like <code>(1,3)</code> means pressing it increases the 2nd and 4th counters by 1.
+                </p>
+                <p>
+                    Find the <strong style="color: #ffd700;">fewest total button presses</strong> to reach all target values across all machines.
+                </p>
+            </div>
+
+            <div class="code-block fade-in delay-2" style="font-size: 1rem;">
+                <span style="color: #888;"># Example machine:</span><br>
+                [.##.] <span style="color: #00d9ff;">(3) (1,3) (2) (2,3) (0,2) (0,1)</span> <span style="color: #ffd700;">{3,5,4,7}</span><br><br>
+                <span style="color: #888;"># 6 buttons, 4 counters, targets: 3, 5, 4, 7</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Spotting the Pattern -->
+        <div class="slide bg-problem" data-slide="2">
+            <h2 class="fade-in">Spotting the Pattern</h2>
+            <p class="fade-in delay-1" style="margin-bottom: 20px; color: #888;">
+                What clues in the problem hint at the solution approach?
+            </p>
+
+            <div class="problem-box fade-in delay-1" style="font-size: 1.25rem;">
+                Each machine has
+                <span class="keyword var" data-hint="Variables x₀, x₁, x₂...">buttons</span>.
+                <span class="keyword var" data-hint="How many times to press each?">Each button</span>
+                can be pressed
+                <span class="keyword linear" data-hint="Linear: pressing 3x = 3× the effect">multiple times</span>,
+                and each press
+                <span class="keyword linear" data-hint="Fixed coefficients (0 or 1)">increases specific counters</span>
+                by exactly 1.
+
+                <br><br>
+
+                Each counter must reach its
+                <span class="keyword constraint" data-hint="Ax = b (right-hand side)">exact target value</span>.
+                Find the
+                <span class="keyword objective" data-hint="Minimize Σxᵢ">minimum total presses</span>.
+            </div>
+
+            <div class="keyword-legend fade-in delay-2">
+                <div class="keyword-legend-item">
+                    <div class="keyword-legend-dot" style="background: #00d9ff;"></div>
+                    <span>Variables</span>
+                </div>
+                <div class="keyword-legend-item">
+                    <div class="keyword-legend-dot" style="background: #ff6b81;"></div>
+                    <span>Linear Operations</span>
+                </div>
+                <div class="keyword-legend-item">
+                    <div class="keyword-legend-dot" style="background: #00ff88;"></div>
+                    <span>Constraints</span>
+                </div>
+                <div class="keyword-legend-item">
+                    <div class="keyword-legend-dot" style="background: #ffd700;"></div>
+                    <span>Objective</span>
+                </div>
+            </div>
+
+            <p class="fade-in delay-3" style="margin-top: 30px; font-size: 1.5rem; color: #00d9ff;">
+                This is a <strong>Linear System</strong> with an <strong>Optimization Objective!</strong>
+            </p>
+        </div>
+
+        <!-- SLIDE 4: Translating to Math -->
+        <div class="slide bg-dark" data-slide="3">
+            <h2 class="fade-in">Translating to Math</h2>
+
+            <p class="fade-in delay-1" style="margin-bottom: 25px;">
+                Let x<sub>i</sub> = number of times we press button i
+            </p>
+
+            <div class="code-block fade-in delay-2" style="font-size: 1.05rem;">
+                <span style="color: #888;"># Machine: (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}</span><br>
+                <span style="color: #888;"># 6 buttons → 6 variables: x₀, x₁, x₂, x₃, x₄, x₅</span><br><br>
+                <span style="color: #00ff88;">Counter 0:</span> x₀ = 3 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(only button 0 affects counter 0)</span><br>
+                <span style="color: #00ff88;">Counter 1:</span> x₁ + x₅ = 5 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons 1,5 affect counter 1)</span><br>
+                <span style="color: #00ff88;">Counter 2:</span> x₂ + x₄ = 4 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons 2,4 affect counter 2)</span><br>
+                <span style="color: #00ff88;">Counter 3:</span> x₀ + x₁ + x₃ + x₄ = 7 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons 0,1,3,4)</span><br><br>
+                <span style="color: #ffd700;">Minimize:</span> x₀ + x₁ + x₂ + x₃ + x₄ + x₅<br>
+                <span style="color: #ffd700;">Subject to:</span> all xᵢ ≥ 0 and integers
+            </div>
+
+            <p class="fade-in delay-3" style="margin-top: 25px;">
+                This is a system of linear equations: <span class="highlight">A · x = b</span>
+            </p>
+        </div>
+
+        <!-- SLIDE 5: Matrix Form -->
+        <div class="slide bg-dark" data-slide="4">
+            <h2 class="fade-in">In Matrix Form</h2>
+
+            <div class="matrix-container fade-in delay-1">
+                <div class="matrix">
+                    <div class="matrix-row">
+                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">1</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">0</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">0</div>
+                    </div>
+                </div>
+                <div class="matrix-symbol">×</div>
+                <div class="vector">
+                    <div class="vector-cell">x₀</div>
+                    <div class="vector-cell">x₁</div>
+                    <div class="vector-cell">x₂</div>
+                    <div class="vector-cell">x₃</div>
+                    <div class="vector-cell">x₄</div>
+                    <div class="vector-cell">x₅</div>
+                </div>
+                <div class="matrix-symbol">=</div>
+                <div class="vector">
+                    <div class="vector-cell">3</div>
+                    <div class="vector-cell">5</div>
+                    <div class="vector-cell">4</div>
+                    <div class="vector-cell">7</div>
+                </div>
+            </div>
+
+            <p class="fade-in delay-2" style="margin-top: 30px;">
+                <span class="highlight">A</span> = button→counter mapping &nbsp;|&nbsp;
+                <span class="highlight-green">x</span> = press counts &nbsp;|&nbsp;
+                <span class="highlight-gold">b</span> = targets
+            </p>
+        </div>
+
+        <!-- SLIDE 6: Gaussian Elimination -->
+        <div class="slide bg-solution" data-slide="5">
+            <h2 class="fade-in">The Solution: Gaussian Elimination</h2>
+
+            <p class="fade-in delay-1" style="font-size: 1.3rem; max-width: 800px; margin-bottom: 30px;">
+                A classic algorithm (from 1810!) that <span class="highlight">systematically eliminates variables</span>
+                until we can express some in terms of others.
+            </p>
+
+            <div class="card fade-in delay-2" style="max-width: 700px;">
+                <h3 style="color: #00d9ff; margin-bottom: 20px;">The Key Insight</h3>
+                <p style="text-align: left; font-size: 1.2rem;">
+                    After elimination, some variables become <span class="highlight-gold">"free"</span> — we can choose their values.
+                    <br><br>
+                    The remaining variables are <span class="highlight">determined</span> by our choices.
+                    <br><br>
+                    We only need to search over the <span class="highlight-green">free variables</span>, not all possible combinations!
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Step by Step -->
+        <div class="slide bg-dark" data-slide="6">
+            <h2 class="fade-in">Step by Step</h2>
+
+            <div class="elimination-container fade-in delay-1" id="elimContainer">
+            </div>
+
+            <div class="step-indicator fade-in delay-2" id="stepIndicator">
+            </div>
+
+            <div class="elim-hint fade-in delay-3">
+                Use <kbd>→</kbd> and <kbd>←</kbd> to step through
+            </div>
+        </div>
+
+        <!-- SLIDE 8: 3D Visualization -->
+        <div class="slide bg-dark" data-slide="7">
+            <h2 class="fade-in">Visualizing the Solution Space</h2>
+            <p class="fade-in delay-1" style="margin-bottom: 20px; font-size: 1.1rem; color: #888;">
+                Each constraint is a plane. The solution is where they all intersect.
+            </p>
+
+            <div class="viz-container fade-in delay-2">
+                <canvas id="canvas3d" class="canvas-3d" width="450" height="350"></canvas>
+
+                <div class="viz-info">
+                    <div class="viz-equation" id="eq0">Constraint 1: x₀ = 3</div>
+                    <div class="viz-equation" id="eq1">Constraint 2: x₁ + x₅ = 5</div>
+                    <div class="viz-equation" id="eq2">Constraint 3: x₂ + x₄ = 4</div>
+                    <div class="viz-equation" id="eq3">Constraint 4: x₀+x₁+x₃+x₄ = 7</div>
+
+                    <div class="viz-solution" id="vizSolution" style="display: none;">
+                        <div>Constraints Satisfied!</div>
+                        <div class="total">Minimum: 10 presses</div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button class="demo-btn" onclick="startVizAnimation()">Animate</button>
+                        <button class="demo-btn" onclick="resetViz()">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: Building to the Answer -->
+        <div class="slide bg-success" data-slide="8">
+            <h2 class="fade-in">Building to the Answer</h2>
+            <p class="fade-in delay-1" style="margin-bottom: 30px;">
+                Apply this to every machine in the input, then sum the results:
+            </p>
+
+            <div class="machine-sum fade-in delay-2" id="machineSum">
+                <div class="machine-row" id="m1">
+                    <span class="label">Machine 1:</span>
+                    <span class="value">solved → presses</span>
+                </div>
+                <div class="machine-row" id="m2">
+                    <span class="label">Machine 2:</span>
+                    <span class="value">solved → presses</span>
+                </div>
+                <div class="machine-row" id="m3">
+                    <span class="label">...</span>
+                    <span class="value">...</span>
+                </div>
+                <div class="machine-row" id="mN">
+                    <span class="label">Machine N:</span>
+                    <span class="value">solved → presses</span>
+                </div>
+                <div class="machine-row total" id="mTotal">
+                    <span class="label">TOTAL:</span>
+                    <span class="value" id="totalValue">21,111</span>
+                </div>
+            </div>
+
+            <button class="demo-btn fade-in delay-3" onclick="animateAnswer()">Show Calculation</button>
+        </div>
+
+        <!-- SLIDE 10: The Answer -->
+        <div class="slide bg-gradient" data-slide="9">
+            <h2 class="fade-in">The Answer</h2>
+
+            <div class="big-answer fade-in delay-1">21,111</div>
+
+            <p class="fade-in delay-2" style="margin-top: 30px; font-size: 1.3rem;">
+                Total minimum button presses across all machines
+            </p>
+
+            <div class="fade-in delay-3" style="margin-top: 40px; padding: 20px 40px; background: rgba(0,255,136,0.1); border-radius: 12px; border: 1px solid #00ff88;">
+                <p style="font-size: 1.1rem; color: #00ff88;">
+                    Computed in <strong>milliseconds</strong> using Gaussian Elimination<br>
+                    <span style="color: #888;">(Brute force would take years)</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: Key Takeaways -->
+        <div class="slide bg-dark" data-slide="10">
+            <h2 class="fade-in">Key Takeaways</h2>
+
+            <ul class="bullet-list fade-in delay-1">
+                <li><span class="highlight">Recognize patterns</span> — "variables", "linear", "constraints", "minimize" → Linear Algebra</li>
+                <li><span class="highlight-green">Use the right tool</span> — Gaussian Elimination is centuries old and battle-tested</li>
+                <li><span class="highlight-gold">Free variables are the key</span> — They reduce an infinite search to a finite one</li>
+                <li><span class="highlight">Constraints help</span> — Upper bounds from targets prune the search space</li>
+            </ul>
+
+            <div class="fade-in delay-2" style="margin-top: 50px;">
+                <p style="font-size: 1.6rem; color: #00d9ff;">
+                    The best solutions come from recognizing<br>
+                    <strong>what kind of problem you're really solving.</strong>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" onclick="prevSlide()">← Previous</button>
+        <button class="nav-btn" id="nextBtn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <div class="keyboard-hints">
+        <kbd>←</kbd> <kbd>→</kbd> or <kbd>Space</kbd> to navigate
+    </div>
+
+    <script>
+        // ============ SLIDE NAVIGATION ============
+        let currentSlide = 0;
+        const totalSlides = 11;
+
+        function updateSlide() {
+            const slides = document.querySelectorAll('.slide');
+
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'exit');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else if (index < currentSlide) {
+                    slide.classList.add('exit');
+                }
+            });
+
+            document.getElementById('progressBar').style.width =
+                ((currentSlide + 1) / totalSlides * 100) + '%';
+            document.getElementById('slideCounter').textContent =
+                `${currentSlide + 1} / ${totalSlides}`;
+
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+
+            // Initialize slide-specific content
+            if (currentSlide === 6) initElimination();
+            if (currentSlide === 7) initViz3D();
+            if (currentSlide === 8) resetAnswerAnimation();
+        }
+
+        function nextSlide() {
+            // On elimination slide (6), step through elimination first
+            if (currentSlide === 6 && elimStep < elimSteps.length - 1) {
+                nextElimStep();
+                return;
+            }
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            // On elimination slide (6), step back through elimination first
+            if (currentSlide === 6 && elimStep > 0) {
+                prevElimStep();
+                return;
+            }
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // ============ ELIMINATION STEPS ============
+        const elimSteps = [
+            {
+                title: "Start: System of Equations",
+                equations: ["x₀ = 3", "x₁ + x₅ = 5", "x₂ + x₄ = 4", "x₀ + x₁ + x₃ + x₄ = 7"],
+                explanation: "4 equations, 6 unknowns. More variables than equations = free variables will exist."
+            },
+            {
+                title: "First Equation Solved",
+                equations: ["<span style='color:#00ff88'>x₀ = 3</span> ✓", "x₁ + x₅ = 5", "x₂ + x₄ = 4", "x₁ + x₃ + x₄ = 4"],
+                explanation: "x₀ is determined! Substitute into equation 4: (3) + x₁ + x₃ + x₄ = 7 → x₁ + x₃ + x₄ = 4"
+            },
+            {
+                title: "Identify Free Variables",
+                equations: ["<span style='color:#00ff88'>x₀ = 3</span> ✓", "x₁ = 5 - x₅", "x₂ = 4 - x₄", "x₃ = 4 - x₁ - x₄"],
+                explanation: "x₄ and x₅ are FREE — we can choose them. Others are determined by our choice."
+            },
+            {
+                title: "Enumerate Free Variables",
+                equations: ["Try x₄ ∈ {0,1,2,3,4}", "Try x₅ ∈ {0,1,2,3,4,5}", "Check: all xᵢ ≥ 0?", "Find minimum sum"],
+                explanation: "Only ~30 combinations to check instead of millions. The solution with x₄=0, x₅=2 gives minimum = 10."
+            }
+        ];
+
+        let elimStep = 0;
+
+        function initElimination() {
+            elimStep = 0;
+            updateElimDisplay();
+        }
+
+        function updateElimDisplay() {
+            const container = document.getElementById('elimContainer');
+            const indicator = document.getElementById('stepIndicator');
+            if (!container) return;
+
+            container.innerHTML = elimSteps.map((step, idx) => `
+                <div class="elim-step ${idx === elimStep ? 'active' : ''} ${idx < elimStep ? 'complete' : ''}">
+                    <div class="step-title">Step ${idx + 1}: ${step.title}</div>
+                    ${step.equations.map(eq => `<div class="equation-box">${eq}</div>`).join(' ')}
+                    <p class="step-explanation">${step.explanation}</p>
+                </div>
+            `).join('');
+
+            if (indicator) {
+                indicator.innerHTML = elimSteps.map((_, idx) => `
+                    <div class="step-dot ${idx === elimStep ? 'active' : ''} ${idx < elimStep ? 'complete' : ''}"></div>
+                `).join('');
+            }
+        }
+
+        function nextElimStep() {
+            if (elimStep < elimSteps.length - 1) {
+                elimStep++;
+                updateElimDisplay();
+            }
+        }
+
+        function prevElimStep() {
+            if (elimStep > 0) {
+                elimStep--;
+                updateElimDisplay();
+            }
+        }
+
+        // ============ 3D VISUALIZATION ============
+        let vizAnimationId = null;
+        let vizRotation = 0;
+        let vizPhase = 0;
+
+        function initViz3D() {
+            resetViz();
+            drawViz3D();
+        }
+
+        function drawViz3D() {
+            const canvas = document.getElementById('canvas3d');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2;
+            const scale = 12;
+
+            const cosR = Math.cos(vizRotation);
+            const sinR = Math.sin(vizRotation);
+            const tilt = 0.3;
+
+            function project(x, y, z) {
+                x -= 5; y -= 5; z -= 5;
+                const rx = x * cosR - z * sinR;
+                const rz = x * sinR + z * cosR;
+                const ry = y * Math.cos(tilt) - rz * Math.sin(tilt);
+                const rz2 = y * Math.sin(tilt) + rz * Math.cos(tilt);
+                const perspective = 200 / (200 + rz2);
+                return { x: cx + rx * scale * perspective, y: cy - ry * scale * perspective, z: rz2 };
+            }
+
+            // Grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i += 2) {
+                let p1 = project(i, 0, 0), p2 = project(i, 0, 10);
+                ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                p1 = project(0, 0, i); p2 = project(10, 0, i);
+                ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+            }
+
+            // Axes
+            ctx.lineWidth = 2;
+            const origin = project(0, 0, 0);
+
+            ctx.strokeStyle = '#00d9ff';
+            let end = project(12, 0, 0);
+            ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(end.x, end.y); ctx.stroke();
+            ctx.fillStyle = '#00d9ff'; ctx.font = 'bold 14px sans-serif';
+            ctx.fillText('x₀', end.x + 8, end.y + 4);
+
+            ctx.strokeStyle = '#00ff88';
+            end = project(0, 12, 0);
+            ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(end.x, end.y); ctx.stroke();
+            ctx.fillStyle = '#00ff88';
+            ctx.fillText('x₁', end.x - 5, end.y - 10);
+
+            ctx.strokeStyle = '#ffd700';
+            end = project(0, 0, 12);
+            ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(end.x, end.y); ctx.stroke();
+            ctx.fillStyle = '#ffd700';
+            ctx.fillText('x₂', end.x + 8, end.y + 4);
+
+            // Constraint planes
+            if (vizPhase >= 1) {
+                ctx.fillStyle = 'rgba(0, 217, 255, 0.15)';
+                ctx.strokeStyle = 'rgba(0, 217, 255, 0.6)';
+                ctx.lineWidth = 2;
+                const plane1 = [project(3, 0, 0), project(3, 10, 0), project(3, 10, 10), project(3, 0, 10)];
+                ctx.beginPath(); ctx.moveTo(plane1[0].x, plane1[0].y);
+                plane1.forEach(p => ctx.lineTo(p.x, p.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
+                document.getElementById('eq0').classList.add('solved');
+            }
+
+            if (vizPhase >= 2) {
+                ctx.fillStyle = 'rgba(0, 255, 136, 0.15)';
+                ctx.strokeStyle = 'rgba(0, 255, 136, 0.6)';
+                const plane2 = [project(0, 5, 0), project(10, 5, 0), project(10, 5, 10), project(0, 5, 10)];
+                ctx.beginPath(); ctx.moveTo(plane2[0].x, plane2[0].y);
+                plane2.forEach(p => ctx.lineTo(p.x, p.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
+                document.getElementById('eq1').classList.add('solved');
+            }
+
+            if (vizPhase >= 3) {
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
+                ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
+                const plane3 = [project(0, 0, 4), project(10, 0, 4), project(10, 10, 4), project(0, 10, 4)];
+                ctx.beginPath(); ctx.moveTo(plane3[0].x, plane3[0].y);
+                plane3.forEach(p => ctx.lineTo(p.x, p.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
+                document.getElementById('eq2').classList.add('solved');
+                document.getElementById('eq3').classList.add('solved');
+            }
+
+            if (vizPhase >= 4) {
+                const solPoint = project(3, 5, 4);
+                const gradient = ctx.createRadialGradient(solPoint.x, solPoint.y, 0, solPoint.x, solPoint.y, 35);
+                gradient.addColorStop(0, 'rgba(255, 215, 0, 0.9)');
+                gradient.addColorStop(0.5, 'rgba(255, 215, 0, 0.3)');
+                gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+                ctx.fillStyle = gradient;
+                ctx.beginPath(); ctx.arc(solPoint.x, solPoint.y, 35, 0, Math.PI * 2); ctx.fill();
+
+                const pulseSize = 8 + Math.sin(vizRotation * 10) * 2;
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath(); ctx.arc(solPoint.x, solPoint.y, pulseSize, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 13px sans-serif';
+                ctx.fillText('SOLUTION', solPoint.x + 20, solPoint.y - 5);
+
+                document.getElementById('vizSolution').style.display = 'block';
+            }
+
+            vizRotation += 0.008;
+            vizAnimationId = requestAnimationFrame(drawViz3D);
+        }
+
+        function startVizAnimation() {
+            if (vizPhase < 4) {
+                vizPhase++;
+                if (vizPhase < 4) setTimeout(startVizAnimation, 600);
+            }
+        }
+
+        function resetViz() {
+            vizPhase = 0;
+            const vizSol = document.getElementById('vizSolution');
+            if (vizSol) vizSol.style.display = 'none';
+            ['eq0', 'eq1', 'eq2', 'eq3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('solved');
+            });
+        }
+
+        // ============ ANSWER ANIMATION ============
+        function resetAnswerAnimation() {
+            ['m1', 'm2', 'm3', 'mN', 'mTotal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('visible');
+            });
+        }
+
+        function animateAnswer() {
+            const rows = ['m1', 'm2', 'm3', 'mN', 'mTotal'];
+            const values = ['127', '88', '...', '156', '21,111'];
+
+            rows.forEach((id, i) => {
+                setTimeout(() => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.classList.add('visible');
+                        const valSpan = el.querySelector('.value');
+                        if (valSpan && values[i]) valSpan.textContent = values[i];
+                    }
+                }, i * 400);
+            });
+        }
+
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+</html>
