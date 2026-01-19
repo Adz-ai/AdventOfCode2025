@@ -443,6 +443,27 @@
         .elimination-container {
             width: 100%;
             max-width: 900px;
+            max-height: calc(100vh - 280px);
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .elimination-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .elimination-container::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+
+        .elimination-container::-webkit-scrollbar-thumb {
+            background: rgba(0, 217, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .elimination-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 217, 255, 0.5);
         }
 
         .elim-step {
@@ -724,11 +745,237 @@
             border-radius: 4px;
             margin: 0 3px;
         }
+
+        /* ============ CODE VISUALIZATION SPLIT SCREEN ============ */
+        .split-container {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            max-width: 1400px;
+            height: calc(100vh - 280px);
+            max-height: 600px;
+            align-items: stretch;
+        }
+
+        .code-panel {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-header {
+            background: rgba(0, 217, 255, 0.1);
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.3);
+            font-weight: 600;
+            color: #00d9ff;
+            font-size: 1rem;
+        }
+
+        .code-content {
+            flex: 1;
+            padding: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .code-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .code-content::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+
+        .code-content::-webkit-scrollbar-thumb {
+            background: rgba(0, 217, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .code-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 217, 255, 0.5);
+        }
+
+        .code-line {
+            display: flex;
+            padding: 4px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            margin: 2px 0;
+        }
+
+        .code-line.highlight {
+            background: rgba(0, 217, 255, 0.2);
+            border-left: 3px solid #00d9ff;
+        }
+
+        .code-line.complete {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid #00ff88;
+            opacity: 0.7;
+        }
+
+        .code-line .line-num {
+            color: #555;
+            min-width: 30px;
+            text-align: right;
+            margin-right: 15px;
+            user-select: none;
+        }
+
+        .code-line .line-content {
+            flex: 1;
+        }
+
+        .code-line .keyword { color: #c678dd; }
+        .code-line .function { color: #61afef; }
+        .code-line .variable { color: #e06c75; }
+        .code-line .comment { color: #5c6370; font-style: italic; }
+        .code-line .number { color: #d19a66; }
+        .code-line .string { color: #98c379; }
+
+        .viz-panel {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .viz-header {
+            font-weight: 600;
+            color: #00ff88;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .viz-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .viz-state::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .viz-state::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+        }
+
+        .viz-state::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 136, 0.3);
+            border-radius: 3px;
+        }
+
+        .viz-matrix-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .viz-matrix-row {
+            display: flex;
+            margin: 4px 0;
+            transition: all 0.3s;
+        }
+
+        .viz-matrix-row.processing {
+            background: rgba(0, 217, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .viz-matrix-row.eliminated {
+            background: rgba(0, 255, 136, 0.15);
+            border-radius: 4px;
+        }
+
+        .viz-matrix-cell {
+            min-width: 45px;
+            text-align: center;
+            padding: 4px;
+        }
+
+        .viz-vars-state {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .viz-vars-title {
+            font-size: 0.9rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .viz-var-item {
+            display: inline-block;
+            margin: 4px 8px;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+        }
+
+        .viz-var-item.free {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+        }
+
+        .viz-var-item.determined {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .viz-var-item.unknown {
+            background: rgba(100, 100, 100, 0.2);
+            border: 1px solid #666;
+            color: #888;
+        }
+
+        .code-viz-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .code-viz-hint {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="progress-bar" id="progressBar"></div>
-    <div class="slide-counter" id="slideCounter">1 / 11</div>
+    <div class="slide-counter" id="slideCounter">1 / 12</div>
 
     <div class="presentation" id="presentation">
 
@@ -828,11 +1075,11 @@
 
             <div class="code-block fade-in delay-2" style="font-size: 1.05rem;">
                 <span style="color: #888;"># Machine: (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}</span><br>
-                <span style="color: #888;"># 6 buttons → 6 variables: x₀, x₁, x₂, x₃, x₄, x₅</span><br><br>
-                <span style="color: #00ff88;">Counter 0:</span> x₀ = 3 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(only button 0 affects counter 0)</span><br>
-                <span style="color: #00ff88;">Counter 1:</span> x₁ + x₅ = 5 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons 1,5 affect counter 1)</span><br>
-                <span style="color: #00ff88;">Counter 2:</span> x₂ + x₄ = 4 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons 2,4 affect counter 2)</span><br>
-                <span style="color: #00ff88;">Counter 3:</span> x₀ + x₁ + x₃ + x₄ = 7 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons 0,1,3,4)</span><br><br>
+                <span style="color: #888;"># Buttons: x₀=(3), x₁=(1,3), x₂=(2), x₃=(2,3), x₄=(0,2), x₅=(0,1)</span><br><br>
+                <span style="color: #00ff88;">Counter 0:</span> x₄ + x₅ = 3 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons (0,2) and (0,1) affect counter 0)</span><br>
+                <span style="color: #00ff88;">Counter 1:</span> x₁ + x₅ = 5 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons (1,3) and (0,1) affect counter 1)</span><br>
+                <span style="color: #00ff88;">Counter 2:</span> x₂ + x₃ + x₄ = 4 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons (2), (2,3), (0,2))</span><br>
+                <span style="color: #00ff88;">Counter 3:</span> x₀ + x₁ + x₃ = 7 <span style="color: #888;">&nbsp;&nbsp;&nbsp;(buttons (3), (1,3), (2,3))</span><br><br>
                 <span style="color: #ffd700;">Minimize:</span> x₀ + x₁ + x₂ + x₃ + x₄ + x₅<br>
                 <span style="color: #ffd700;">Subject to:</span> all xᵢ ≥ 0 and integers
             </div>
@@ -849,12 +1096,12 @@
             <div class="matrix-container fade-in delay-1">
                 <div class="matrix">
                     <div class="matrix-row">
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div>
                         <div class="matrix-cell">1</div>
-                        <div class="matrix-cell">0</div>
-                        <div class="matrix-cell">0</div>
-                        <div class="matrix-cell">0</div>
-                        <div class="matrix-cell">0</div>
-                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">1</div>
                     </div>
                     <div class="matrix-row">
                         <div class="matrix-cell">0</div>
@@ -868,7 +1115,7 @@
                         <div class="matrix-cell">0</div>
                         <div class="matrix-cell">0</div>
                         <div class="matrix-cell">1</div>
-                        <div class="matrix-cell">0</div>
+                        <div class="matrix-cell">1</div>
                         <div class="matrix-cell">1</div>
                         <div class="matrix-cell">0</div>
                     </div>
@@ -877,7 +1124,7 @@
                         <div class="matrix-cell">1</div>
                         <div class="matrix-cell">0</div>
                         <div class="matrix-cell">1</div>
-                        <div class="matrix-cell">1</div>
+                        <div class="matrix-cell">0</div>
                         <div class="matrix-cell">0</div>
                     </div>
                 </div>
@@ -929,21 +1176,295 @@
 
         <!-- SLIDE 7: Step by Step -->
         <div class="slide bg-dark" data-slide="6">
-            <h2 class="fade-in">Step by Step</h2>
+            <h2 class="fade-in">Step by Step <span style="font-size: 0.5em; color: #666; font-weight: normal;">(<kbd>→</kbd> <kbd>←</kbd> to navigate)</span></h2>
 
             <div class="elimination-container fade-in delay-1" id="elimContainer">
             </div>
 
             <div class="step-indicator fade-in delay-2" id="stepIndicator">
             </div>
-
-            <div class="elim-hint fade-in delay-3">
-                Use <kbd>→</kbd> and <kbd>←</kbd> to step through
-            </div>
         </div>
 
-        <!-- SLIDE 8: 3D Visualization -->
+        <!-- SLIDE 8: Code + Visualization Side by Side -->
         <div class="slide bg-dark" data-slide="7">
+            <h2 class="fade-in" style="margin-bottom: 15px;">The Algorithm in Action</h2>
+
+            <div class="split-container fade-in delay-1">
+                <div class="code-panel">
+                    <div class="code-header">GaussianSolver.java (Pseudocode)</div>
+                    <div class="code-content" id="codeContent">
+                        <div class="code-line" data-step="0">
+                            <span class="line-num">1</span>
+                            <span class="line-content"><span class="comment">// === PHASE 1: BUILD MATRIX ===</span></span>
+                        </div>
+                        <div class="code-line" data-step="0">
+                            <span class="line-num">2</span>
+                            <span class="line-content"><span class="keyword">for each</span> <span class="variable">counter</span> c:</span>
+                        </div>
+                        <div class="code-line" data-step="0">
+                            <span class="line-num">3</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="keyword">for each</span> <span class="variable">button</span> b:</span>
+                        </div>
+                        <div class="code-line" data-step="0">
+                            <span class="line-num">4</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">A[c][b]</span> = <span class="number">1</span> <span class="keyword">if</span> button b affects counter c</span>
+                        </div>
+                        <div class="code-line" data-step="1">
+                            <span class="line-num">5</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line" data-step="1">
+                            <span class="line-num">6</span>
+                            <span class="line-content"><span class="comment">// === PHASE 2: GAUSSIAN ELIMINATION ===</span></span>
+                        </div>
+                        <div class="code-line" data-step="1">
+                            <span class="line-num">7</span>
+                            <span class="line-content"><span class="keyword">for</span> <span class="variable">v</span> = <span class="number">0</span> <span class="keyword">to</span> numVars - <span class="number">1</span>:</span>
+                        </div>
+                        <div class="code-line" data-step="2">
+                            <span class="line-num">8</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="comment">// Find row with non-zero coeff for x_v</span></span>
+                        </div>
+                        <div class="code-line" data-step="2">
+                            <span class="line-num">9</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="variable">pivotRow</span> = <span class="number">-1</span></span>
+                        </div>
+                        <div class="code-line" data-step="2">
+                            <span class="line-num">10</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="keyword">for</span> <span class="variable">row</span> = <span class="number">0</span> <span class="keyword">to</span> numEquations:</span>
+                        </div>
+                        <div class="code-line" data-step="2">
+                            <span class="line-num">11</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> |<span class="variable">A[row][v]</span>| > <span class="variable">EPS</span>:</span>
+                        </div>
+                        <div class="code-line" data-step="2">
+                            <span class="line-num">12</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">pivotRow</span> = <span class="variable">row</span>; <span class="keyword">break</span></span>
+                        </div>
+                        <div class="code-line" data-step="3">
+                            <span class="line-num">13</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line" data-step="3">
+                            <span class="line-num">14</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="keyword">if</span> <span class="variable">pivotRow</span> == <span class="number">-1</span>:</span>
+                        </div>
+                        <div class="code-line" data-step="3">
+                            <span class="line-num">15</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">freeFlags[v]</span> = <span class="keyword">true</span> <span class="comment">// No pivot → FREE!</span></span>
+                        </div>
+                        <div class="code-line" data-step="3">
+                            <span class="line-num">16</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">continue</span></span>
+                        </div>
+                        <div class="code-line" data-step="4">
+                            <span class="line-num">17</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line" data-step="4">
+                            <span class="line-num">18</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="comment">// Extract: solve pivot row for x_v</span></span>
+                        </div>
+                        <div class="code-line" data-step="4">
+                            <span class="line-num">19</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="variable">pivot</span> = -<span class="variable">A[pivotRow][v]</span></span>
+                        </div>
+                        <div class="code-line" data-step="4">
+                            <span class="line-num">20</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="variable">varConst[v]</span> = <span class="variable">b[pivotRow]</span> / <span class="variable">pivot</span></span>
+                        </div>
+                        <div class="code-line" data-step="5">
+                            <span class="line-num">21</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="keyword">for</span> <span class="variable">i</span> = <span class="number">0</span> <span class="keyword">to</span> numVars:</span>
+                        </div>
+                        <div class="code-line" data-step="5">
+                            <span class="line-num">22</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">varCoeffs[v][i]</span> = <span class="variable">A[pivotRow][i]</span> / <span class="variable">pivot</span></span>
+                        </div>
+                        <div class="code-line" data-step="5">
+                            <span class="line-num">23</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="variable">freeFlags[v]</span> = <span class="keyword">false</span> <span class="comment">// v is determined</span></span>
+                        </div>
+                        <div class="code-line" data-step="6">
+                            <span class="line-num">24</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line" data-step="6">
+                            <span class="line-num">25</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="comment">// Substitute x_v into all other equations</span></span>
+                        </div>
+                        <div class="code-line" data-step="6">
+                            <span class="line-num">26</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="keyword">for each</span> <span class="variable">equation</span> j:</span>
+                        </div>
+                        <div class="code-line" data-step="6">
+                            <span class="line-num">27</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">coeff</span> = <span class="variable">A[j][v]</span></span>
+                        </div>
+                        <div class="code-line" data-step="6">
+                            <span class="line-num">28</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">A[j][v]</span> = <span class="number">0</span></span>
+                        </div>
+                        <div class="code-line" data-step="6">
+                            <span class="line-num">29</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> <span class="variable">i</span>: <span class="variable">A[j][i]</span> += <span class="variable">coeff</span> * <span class="variable">varCoeffs[v][i]</span></span>
+                        </div>
+                        <div class="code-line" data-step="6">
+                            <span class="line-num">30</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">b[j]</span> += <span class="variable">coeff</span> * <span class="variable">varConst[v]</span></span>
+                        </div>
+                        <div class="code-line" data-step="7">
+                            <span class="line-num">31</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line" data-step="7">
+                            <span class="line-num">32</span>
+                            <span class="line-content"><span class="comment">// === PHASE 3: ENUMERATE FREE VARS ===</span></span>
+                        </div>
+                        <div class="code-line" data-step="7">
+                            <span class="line-num">33</span>
+                            <span class="line-content"><span class="variable">freeVars</span> = [v <span class="keyword">where</span> <span class="variable">freeFlags[v]</span> == <span class="keyword">true</span>]</span>
+                        </div>
+                        <div class="code-line" data-step="8">
+                            <span class="line-num">34</span>
+                            <span class="line-content"><span class="variable">best</span> = <span class="variable">INFINITY</span></span>
+                        </div>
+                        <div class="code-line" data-step="8">
+                            <span class="line-num">35</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line" data-step="8">
+                            <span class="line-num">36</span>
+                            <span class="line-content"><span class="keyword">for each</span> combination <span class="keyword">of</span> <span class="variable">freeVars</span> (0 to upperBound):</span>
+                        </div>
+                        <div class="code-line" data-step="9">
+                            <span class="line-num">37</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="comment">// Compute dependent vars from expressions</span></span>
+                        </div>
+                        <div class="code-line" data-step="9">
+                            <span class="line-num">38</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="keyword">for</span> <span class="variable">i</span> = numVars-<span class="number">1</span> <span class="keyword">down to</span> <span class="number">0</span>:</span>
+                        </div>
+                        <div class="code-line" data-step="9">
+                            <span class="line-num">39</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if not</span> <span class="variable">freeFlags[i]</span>:</span>
+                        </div>
+                        <div class="code-line" data-step="9">
+                            <span class="line-num">40</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">x[i]</span> = <span class="variable">varConst[i]</span> + Σ(<span class="variable">varCoeffs[i][j]</span>*<span class="variable">x[j]</span>)</span>
+                        </div>
+                        <div class="code-line" data-step="10">
+                            <span class="line-num">41</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line" data-step="10">
+                            <span class="line-num">42</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="comment">// Validate: must be non-negative integer</span></span>
+                        </div>
+                        <div class="code-line" data-step="10">
+                            <span class="line-num">43</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="keyword">if</span> <span class="variable">x[i]</span> < <span class="number">0</span>: <span class="keyword">skip</span> <span class="comment">// invalid</span></span>
+                        </div>
+                        <div class="code-line" data-step="10">
+                            <span class="line-num">44</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="keyword">if</span> <span class="variable">x[i]</span> != round(<span class="variable">x[i]</span>): <span class="keyword">skip</span> <span class="comment">// not integer</span></span>
+                        </div>
+                        <div class="code-line" data-step="11">
+                            <span class="line-num">45</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line" data-step="11">
+                            <span class="line-num">46</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="variable">total</span> = sum(<span class="variable">x</span>)</span>
+                        </div>
+                        <div class="code-line" data-step="11">
+                            <span class="line-num">47</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="variable">best</span> = min(<span class="variable">best</span>, <span class="variable">total</span>)</span>
+                        </div>
+                        <div class="code-line" data-step="12">
+                            <span class="line-num">48</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line" data-step="12">
+                            <span class="line-num">49</span>
+                            <span class="line-content"><span class="keyword">return</span> <span class="variable">best</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-panel">
+                    <div class="viz-header">Live State</div>
+                    <div class="viz-state">
+                        <div class="viz-matrix-display" id="vizMatrixDisplay">
+                            <div style="color: #888; margin-bottom: 10px;">Coefficient Matrix [A|b]:</div>
+                            <div class="viz-matrix-row" id="mrow0">
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell" style="color:#ffd700">| 3</span>
+                            </div>
+                            <div class="viz-matrix-row" id="mrow1">
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell" style="color:#ffd700">| 5</span>
+                            </div>
+                            <div class="viz-matrix-row" id="mrow2">
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell" style="color:#ffd700">| 4</span>
+                            </div>
+                            <div class="viz-matrix-row" id="mrow3">
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">1</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell">0</span>
+                                <span class="viz-matrix-cell" style="color:#ffd700">| 7</span>
+                            </div>
+                        </div>
+
+                        <div class="viz-vars-state">
+                            <div class="viz-vars-title">Variable Status:</div>
+                            <div id="varStatusDisplay">
+                                <span class="viz-var-item unknown">x₀ = ?</span>
+                                <span class="viz-var-item unknown">x₁ = ?</span>
+                                <span class="viz-var-item unknown">x₂ = ?</span>
+                                <span class="viz-var-item unknown">x₃ = ?</span>
+                                <span class="viz-var-item unknown">x₄ = ?</span>
+                                <span class="viz-var-item unknown">x₅ = ?</span>
+                            </div>
+                        </div>
+
+                        <div id="algorithmPhase" style="margin-top: 15px; padding: 12px; background: rgba(0,217,255,0.1); border-radius: 8px; text-align: center; color: #00d9ff;">
+                            Phase: Building Matrix
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-viz-controls fade-in delay-2">
+                <button class="demo-btn" onclick="prevCodeStep()">← Previous</button>
+                <button class="demo-btn" onclick="nextCodeStep()">Next →</button>
+                <button class="demo-btn" onclick="autoPlayCode()">▶ Auto Play</button>
+                <button class="demo-btn" onclick="resetCodeViz()">Reset</button>
+            </div>
+            <div class="code-viz-hint fade-in delay-3">Use buttons or arrow keys to step through the algorithm</div>
+        </div>
+
+        <!-- SLIDE 9: 3D Visualization -->
+        <div class="slide bg-dark" data-slide="8">
             <h2 class="fade-in">Visualizing the Solution Space</h2>
             <p class="fade-in delay-1" style="margin-bottom: 20px; font-size: 1.1rem; color: #888;">
                 Each constraint is a plane. The solution is where they all intersect.
@@ -953,10 +1474,10 @@
                 <canvas id="canvas3d" class="canvas-3d" width="450" height="350"></canvas>
 
                 <div class="viz-info">
-                    <div class="viz-equation" id="eq0">Constraint 1: x₀ = 3</div>
+                    <div class="viz-equation" id="eq0">Constraint 1: x₄ + x₅ = 3</div>
                     <div class="viz-equation" id="eq1">Constraint 2: x₁ + x₅ = 5</div>
-                    <div class="viz-equation" id="eq2">Constraint 3: x₂ + x₄ = 4</div>
-                    <div class="viz-equation" id="eq3">Constraint 4: x₀+x₁+x₃+x₄ = 7</div>
+                    <div class="viz-equation" id="eq2">Constraint 3: x₂ + x₃ + x₄ = 4</div>
+                    <div class="viz-equation" id="eq3">Constraint 4: x₀ + x₁ + x₃ = 7</div>
 
                     <div class="viz-solution" id="vizSolution" style="display: none;">
                         <div>Constraints Satisfied!</div>
@@ -971,8 +1492,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 9: Building to the Answer -->
-        <div class="slide bg-success" data-slide="8">
+        <!-- SLIDE 10: Building to the Answer -->
+        <div class="slide bg-success" data-slide="9">
             <h2 class="fade-in">Building to the Answer</h2>
             <p class="fade-in delay-1" style="margin-bottom: 30px;">
                 Apply this to every machine in the input, then sum the results:
@@ -1004,8 +1525,8 @@
             <button class="demo-btn fade-in delay-3" onclick="animateAnswer()">Show Calculation</button>
         </div>
 
-        <!-- SLIDE 10: The Answer -->
-        <div class="slide bg-gradient" data-slide="9">
+        <!-- SLIDE 11: The Answer -->
+        <div class="slide bg-gradient" data-slide="10">
             <h2 class="fade-in">The Answer</h2>
 
             <div class="big-answer fade-in delay-1">21,111</div>
@@ -1022,8 +1543,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 11: Key Takeaways -->
-        <div class="slide bg-dark" data-slide="10">
+        <!-- SLIDE 12: Key Takeaways -->
+        <div class="slide bg-dark" data-slide="11">
             <h2 class="fade-in">Key Takeaways</h2>
 
             <ul class="bullet-list fade-in delay-1">
@@ -1055,7 +1576,7 @@
     <script>
         // ============ SLIDE NAVIGATION ============
         let currentSlide = 0;
-        const totalSlides = 11;
+        const totalSlides = 12;
 
         function updateSlide() {
             const slides = document.querySelectorAll('.slide');
@@ -1079,14 +1600,20 @@
 
             // Initialize slide-specific content
             if (currentSlide === 6) initElimination();
-            if (currentSlide === 7) initViz3D();
-            if (currentSlide === 8) resetAnswerAnimation();
+            if (currentSlide === 7) initCodeViz();
+            if (currentSlide === 8) initViz3D();
+            if (currentSlide === 9) resetAnswerAnimation();
         }
 
         function nextSlide() {
             // On elimination slide (6), step through elimination first
             if (currentSlide === 6 && elimStep < elimSteps.length - 1) {
                 nextElimStep();
+                return;
+            }
+            // On code viz slide (7), step through code first
+            if (currentSlide === 7 && codeStep < codeSteps.length - 1) {
+                nextCodeStep();
                 return;
             }
             if (currentSlide < totalSlides - 1) {
@@ -1099,6 +1626,11 @@
             // On elimination slide (6), step back through elimination first
             if (currentSlide === 6 && elimStep > 0) {
                 prevElimStep();
+                return;
+            }
+            // On code viz slide (7), step back through code first
+            if (currentSlide === 7 && codeStep > 0) {
+                prevCodeStep();
                 return;
             }
             if (currentSlide > 0) {
@@ -1120,24 +1652,34 @@
         // ============ ELIMINATION STEPS ============
         const elimSteps = [
             {
-                title: "Start: System of Equations",
-                equations: ["x₀ = 3", "x₁ + x₅ = 5", "x₂ + x₄ = 4", "x₀ + x₁ + x₃ + x₄ = 7"],
-                explanation: "4 equations, 6 unknowns. More variables than equations = free variables will exist."
+                title: "System of Equations",
+                equations: ["x₄ + x₅ = 3", "x₁ + x₅ = 5", "x₂ + x₃ + x₄ = 4", "x₀ + x₁ + x₃ = 7"],
+                explanation: "4 equations, 6 unknowns. More variables than equations means free variables will exist."
             },
             {
-                title: "First Equation Solved",
-                equations: ["<span style='color:#00ff88'>x₀ = 3</span> ✓", "x₁ + x₅ = 5", "x₂ + x₄ = 4", "x₁ + x₃ + x₄ = 4"],
-                explanation: "x₀ is determined! Substitute into equation 4: (3) + x₁ + x₃ + x₄ = 7 → x₁ + x₃ + x₄ = 4"
+                title: "Process First Row (Pivot on x₄)",
+                equations: ["<span style='color:#00ff88'>x₄ = 3 - x₅</span>", "x₁ + x₅ = 5", "x₂ + x₃ + (3 - x₅) = 4", "x₀ + x₁ + x₃ = 7"],
+                explanation: "Solve equation 1 for x₄, then substitute into equation 3. This is the 'elimination' step."
+            },
+            {
+                title: "Simplify & Process More Rows",
+                equations: ["<span style='color:#00ff88'>x₄ = 3 - x₅</span>", "<span style='color:#00ff88'>x₁ = 5 - x₅</span>", "x₂ + x₃ - x₅ = 1", "x₀ + (5 - x₅) + x₃ = 7"],
+                explanation: "Solve equation 2 for x₁. Substitute into remaining equations containing x₁."
+            },
+            {
+                title: "Continue Elimination",
+                equations: ["<span style='color:#00ff88'>x₄ = 3 - x₅</span>", "<span style='color:#00ff88'>x₁ = 5 - x₅</span>", "<span style='color:#00ff88'>x₂ = 1 - x₃ + x₅</span>", "x₀ + x₃ = 2 + x₅"],
+                explanation: "Solve equation 3 for x₂. Variables x₀, x₃, x₅ remain. We have 1 equation left but 3 variables."
             },
             {
                 title: "Identify Free Variables",
-                equations: ["<span style='color:#00ff88'>x₀ = 3</span> ✓", "x₁ = 5 - x₅", "x₂ = 4 - x₄", "x₃ = 4 - x₁ - x₄"],
-                explanation: "x₄ and x₅ are FREE — we can choose them. Others are determined by our choice."
+                equations: ["Free: <span style='color:#ffd700'>x₃</span>, <span style='color:#ffd700'>x₅</span>", "Determined: x₀ = 2 + x₅ - x₃", "Determined: x₁ = 5 - x₅", "Determined: x₂ = 1 - x₃ + x₅, x₄ = 3 - x₅"],
+                explanation: "6 vars - 4 equations = 2 free variables (x₃ and x₅). We only enumerate over these 2!"
             },
             {
-                title: "Enumerate Free Variables",
-                equations: ["Try x₄ ∈ {0,1,2,3,4}", "Try x₅ ∈ {0,1,2,3,4,5}", "Check: all xᵢ ≥ 0?", "Find minimum sum"],
-                explanation: "Only ~30 combinations to check instead of millions. The solution with x₄=0, x₅=2 gives minimum = 10."
+                title: "Enumerate & Find Minimum",
+                equations: ["Try x₃ ∈ {0,1,...,4}", "Try x₅ ∈ {0,1,...,3}", "Check: all xᵢ ≥ 0?", "Find minimum Σxᵢ"],
+                explanation: "Solution: x₀=1, x₁=3, x₂=0, x₃=3, x₄=1, x₅=2 → Total = <span style='color:#ffd700'>10 presses</span>"
             }
         ];
 
@@ -1154,7 +1696,7 @@
             if (!container) return;
 
             container.innerHTML = elimSteps.map((step, idx) => `
-                <div class="elim-step ${idx === elimStep ? 'active' : ''} ${idx < elimStep ? 'complete' : ''}">
+                <div class="elim-step ${idx === elimStep ? 'active' : ''} ${idx < elimStep ? 'complete' : ''}" id="elimStep${idx}">
                     <div class="step-title">Step ${idx + 1}: ${step.title}</div>
                     ${step.equations.map(eq => `<div class="equation-box">${eq}</div>`).join(' ')}
                     <p class="step-explanation">${step.explanation}</p>
@@ -1165,6 +1707,12 @@
                 indicator.innerHTML = elimSteps.map((_, idx) => `
                     <div class="step-dot ${idx === elimStep ? 'active' : ''} ${idx < elimStep ? 'complete' : ''}"></div>
                 `).join('');
+            }
+
+            // Auto-scroll to active step
+            const activeStep = document.getElementById(`elimStep${elimStep}`);
+            if (activeStep) {
+                activeStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
@@ -1345,6 +1893,251 @@
                     }
                 }, i * 400);
             });
+        }
+
+        // ============ CODE VISUALIZATION ============
+        let codeStep = 0;
+        let autoPlayInterval = null;
+        const codeSteps = [
+            {
+                phase: "Phase 1: Building coefficient matrix A",
+                highlight: [0],
+                vars: ['?', '?', '?', '?', '?', '?'],
+                varStates: ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown'],
+                matrixHighlight: ['mrow0', 'mrow1', 'mrow2', 'mrow3']
+            },
+            {
+                phase: "Phase 2: Start Gaussian Elimination loop",
+                highlight: [1],
+                vars: ['?', '?', '?', '?', '?', '?'],
+                varStates: ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown'],
+                matrixHighlight: []
+            },
+            {
+                phase: "v=0: Searching for pivot row (non-zero A[row][0])",
+                highlight: [2],
+                vars: ['?', '?', '?', '?', '?', '?'],
+                varStates: ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown'],
+                matrixHighlight: ['mrow0', 'mrow1', 'mrow2', 'mrow3']
+            },
+            {
+                phase: "v=0: Found pivot at row 4 (A[3][0]=1)",
+                highlight: [3],
+                vars: ['?', '?', '?', '?', '?', '?'],
+                varStates: ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown'],
+                matrixHighlight: ['mrow3']
+            },
+            {
+                phase: "v=0: Extract expression for x₀ from pivot row",
+                highlight: [4],
+                vars: ['...', '?', '?', '?', '?', '?'],
+                varStates: ['unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown'],
+                matrixHighlight: ['mrow3']
+            },
+            {
+                phase: "v=0: x₀ = 7 - x₁ - x₃ (determined!)",
+                highlight: [5],
+                vars: ['7-x₁-x₃', '?', '?', '?', '?', '?'],
+                varStates: ['determined', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown'],
+                matrixHighlight: ['mrow3']
+            },
+            {
+                phase: "v=0: Substitute x₀ into all other equations",
+                highlight: [6],
+                vars: ['7-x₁-x₃', '?', '?', '?', '?', '?'],
+                varStates: ['determined', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown'],
+                matrixHighlight: ['mrow0', 'mrow1', 'mrow2']
+            },
+            {
+                phase: "v=1: Find pivot → row 2. Extract x₁ = 5 - x₅",
+                highlight: [2, 3, 4, 5],
+                vars: ['7-x₁-x₃', '5-x₅', '?', '?', '?', '?'],
+                varStates: ['determined', 'determined', 'unknown', 'unknown', 'unknown', 'unknown'],
+                matrixHighlight: ['mrow1']
+            },
+            {
+                phase: "v=2: Find pivot → row 3. Extract x₂ = 4-x₃-x₄",
+                highlight: [2, 3, 4, 5],
+                vars: ['7-x₁-x₃', '5-x₅', '4-x₃-x₄', '?', '?', '?'],
+                varStates: ['determined', 'determined', 'determined', 'unknown', 'unknown', 'unknown'],
+                matrixHighlight: ['mrow2']
+            },
+            {
+                phase: "v=3: No pivot found! → x₃ is FREE",
+                highlight: [3],
+                vars: ['7-x₁-x₃', '5-x₅', '4-x₃-x₄', 'FREE', '?', '?'],
+                varStates: ['determined', 'determined', 'determined', 'free', 'unknown', 'unknown'],
+                matrixHighlight: []
+            },
+            {
+                phase: "v=4: Find pivot → row 1. Extract x₄ = 3 - x₅",
+                highlight: [2, 3, 4, 5],
+                vars: ['7-x₁-x₃', '5-x₅', '4-x₃-x₄', 'FREE', '3-x₅', '?'],
+                varStates: ['determined', 'determined', 'determined', 'free', 'determined', 'unknown'],
+                matrixHighlight: ['mrow0']
+            },
+            {
+                phase: "v=5: No pivot found! → x₅ is FREE",
+                highlight: [3],
+                vars: ['7-x₁-x₃', '5-x₅', '4-x₃-x₄', 'FREE', '3-x₅', 'FREE'],
+                varStates: ['determined', 'determined', 'determined', 'free', 'determined', 'free'],
+                matrixHighlight: []
+            },
+            {
+                phase: "Phase 3: Collect free variables → {x₃, x₅}",
+                highlight: [7],
+                vars: ['7-x₁-x₃', '5-x₅', '4-x₃-x₄', 'FREE', '3-x₅', 'FREE'],
+                varStates: ['determined', 'determined', 'determined', 'free', 'determined', 'free'],
+                matrixHighlight: []
+            },
+            {
+                phase: "Enumerate: x₃ ∈ {0..4}, x₅ ∈ {0..3}",
+                highlight: [8],
+                vars: ['...', '...', '...', '0..4', '...', '0..3'],
+                varStates: ['determined', 'determined', 'determined', 'free', 'determined', 'free'],
+                matrixHighlight: []
+            },
+            {
+                phase: "For each combo: compute dependent variables",
+                highlight: [9],
+                vars: ['calc', 'calc', 'calc', 'try', 'calc', 'try'],
+                varStates: ['determined', 'determined', 'determined', 'free', 'determined', 'free'],
+                matrixHighlight: []
+            },
+            {
+                phase: "Validate: x[i] ≥ 0 and integer?",
+                highlight: [10],
+                vars: ['≥0?', '≥0?', '≥0?', '✓', '≥0?', '✓'],
+                varStates: ['determined', 'determined', 'determined', 'free', 'determined', 'free'],
+                matrixHighlight: []
+            },
+            {
+                phase: "Track minimum: best = min(best, sum(x))",
+                highlight: [11],
+                vars: ['1', '3', '0', '3', '1', '2'],
+                varStates: ['determined', 'determined', 'determined', 'free', 'determined', 'free'],
+                matrixHighlight: []
+            },
+            {
+                phase: "Return best = 10 presses!",
+                highlight: [12],
+                vars: ['1', '3', '0', '3', '1', '2'],
+                varStates: ['determined', 'determined', 'determined', 'free', 'determined', 'free'],
+                matrixHighlight: []
+            }
+        ];
+
+        function initCodeViz() {
+            codeStep = 0;
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+            updateCodeViz();
+        }
+
+        function updateCodeViz() {
+            const step = codeSteps[codeStep];
+            if (!step) return;
+
+            // Update code highlighting
+            let firstHighlightedLine = null;
+            document.querySelectorAll('.code-line').forEach(line => {
+                line.classList.remove('highlight', 'complete');
+                const lineStep = parseInt(line.dataset.step);
+                if (step.highlight.includes(lineStep)) {
+                    line.classList.add('highlight');
+                    if (!firstHighlightedLine) firstHighlightedLine = line;
+                } else if (lineStep < Math.min(...step.highlight)) {
+                    line.classList.add('complete');
+                }
+            });
+
+            // Auto-scroll code panel to show highlighted line
+            if (firstHighlightedLine) {
+                const codeContent = document.getElementById('codeContent');
+                if (codeContent) {
+                    const lineTop = firstHighlightedLine.offsetTop;
+                    const lineHeight = firstHighlightedLine.offsetHeight;
+                    const containerHeight = codeContent.clientHeight;
+                    const scrollTop = codeContent.scrollTop;
+
+                    // Scroll if line is not visible
+                    if (lineTop < scrollTop || lineTop + lineHeight > scrollTop + containerHeight) {
+                        codeContent.scrollTop = lineTop - containerHeight / 3;
+                    }
+                }
+            }
+
+            // Update variable status
+            const varDisplay = document.getElementById('varStatusDisplay');
+            if (varDisplay) {
+                varDisplay.innerHTML = step.vars.map((val, i) =>
+                    `<span class="viz-var-item ${step.varStates[i]}">x${subscript(i)} = ${val}</span>`
+                ).join('');
+            }
+
+            // Update matrix highlighting
+            ['mrow0', 'mrow1', 'mrow2', 'mrow3'].forEach(id => {
+                const row = document.getElementById(id);
+                if (row) {
+                    row.classList.remove('processing', 'eliminated');
+                    if (step.matrixHighlight.includes(id)) {
+                        row.classList.add('processing');
+                    }
+                }
+            });
+
+            // Update phase
+            const phaseEl = document.getElementById('algorithmPhase');
+            if (phaseEl) {
+                phaseEl.textContent = `Phase: ${step.phase}`;
+            }
+        }
+
+        function subscript(n) {
+            const subs = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+            return String(n).split('').map(d => subs[parseInt(d)]).join('');
+        }
+
+        function nextCodeStep() {
+            if (codeStep < codeSteps.length - 1) {
+                codeStep++;
+                updateCodeViz();
+            }
+        }
+
+        function prevCodeStep() {
+            if (codeStep > 0) {
+                codeStep--;
+                updateCodeViz();
+            }
+        }
+
+        function autoPlayCode() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+                return;
+            }
+            autoPlayInterval = setInterval(() => {
+                if (codeStep < codeSteps.length - 1) {
+                    codeStep++;
+                    updateCodeViz();
+                } else {
+                    clearInterval(autoPlayInterval);
+                    autoPlayInterval = null;
+                }
+            }, 1200);
+        }
+
+        function resetCodeViz() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+            codeStep = 0;
+            updateCodeViz();
         }
 
         // Initialize
