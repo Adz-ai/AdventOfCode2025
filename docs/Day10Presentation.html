@@ -957,6 +957,113 @@
             color: #888;
         }
 
+        /* ============ BFS CODE VISUALIZATION ============ */
+        .bfs-viz-section {
+            margin-bottom: 12px;
+        }
+
+        .bfs-viz-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .bfs-viz-value {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bfs-state-box {
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            padding: 6px 12px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid #0a4a6a;
+            border-radius: 4px;
+            color: #00d9ff;
+        }
+
+        .bfs-state-box.target {
+            background: rgba(255, 107, 129, 0.15);
+            border-color: #ff6b81;
+            color: #ff6b81;
+        }
+
+        .bfs-state-box.current {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .bfs-state-box.found {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .bfs-press-count {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .bfs-queue-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-height: 60px;
+            overflow-y: auto;
+        }
+
+        .bfs-queue-item {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid #0a4a6a;
+            border-radius: 3px;
+            color: #00d9ff;
+        }
+
+        .bfs-queue-item.processing {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .bfs-queue-item.empty {
+            color: #666;
+            border-color: #444;
+            background: rgba(100, 100, 100, 0.1);
+        }
+
+        .bfs-visited-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-height: 50px;
+            overflow-y: auto;
+        }
+
+        .bfs-visited-item {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            background: rgba(100, 100, 100, 0.2);
+            border: 1px solid #555;
+            border-radius: 3px;
+            color: #888;
+        }
+
+        .bfs-visited-item.new {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
         .code-viz-controls {
             display: flex;
             justify-content: center;
@@ -971,11 +1078,150 @@
             font-size: 0.85rem;
             margin-top: 5px;
         }
+
+        /* ============ BFS TREE VISUALIZATION ============ */
+        .bfs-tree-container {
+            background: linear-gradient(180deg, rgba(0,20,40,0.8) 0%, rgba(0,10,20,0.9) 100%);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 340px;
+        }
+
+        .bfs-level {
+            margin-bottom: 15px;
+            transition: opacity 0.5s ease;
+        }
+
+        .bfs-level-label {
+            color: #555;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .bfs-nodes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .bfs-node {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0d1a2a 100%);
+            border: 2px solid #0a4a6a;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #88aacc;
+            transition: all 0.3s ease;
+            cursor: default;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .bfs-node.start {
+            background: linear-gradient(135deg, #3a3a1a 0%, #2a2a0d 100%);
+            border-color: #ffd700;
+            color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .bfs-node.target {
+            background: linear-gradient(135deg, #3a1a2a 0%, #2a0d1a 100%);
+            border-color: #ff6b81;
+            color: #ff6b81;
+            box-shadow: 0 0 20px rgba(255, 107, 129, 0.4);
+            animation: targetPulse 1.5s ease-in-out infinite;
+        }
+
+        .bfs-node.on-path {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0d2a1a 100%);
+            border-color: #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .bfs-node.visited {
+            border-color: #00d9ff;
+            color: #00d9ff;
+        }
+
+        @keyframes targetPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 129, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(255, 107, 129, 0.7); }
+        }
+
+        .bfs-info-panel {
+            background: linear-gradient(180deg, rgba(0,20,40,0.8) 0%, rgba(0,10,20,0.9) 100%);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .bfs-info-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .bfs-info-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .bfs-info-title {
+            color: #00d9ff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .bfs-queue-display {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: #888;
+            max-height: 80px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .bfs-queue-item {
+            display: inline-block;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin: 2px;
+            color: #00d9ff;
+        }
+
+        .bfs-stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .bfs-result-panel {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(0,255,136,0.1) 0%, rgba(0,100,50,0.1) 100%);
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="progress-bar" id="progressBar"></div>
-    <div class="slide-counter" id="slideCounter">1 / 12</div>
+    <div class="slide-counter" id="slideCounter">1 / 19</div>
 
     <div class="presentation" id="presentation">
 
@@ -983,16 +1229,357 @@
         <div class="slide bg-gradient active" data-slide="0">
             <div class="title-decoration left"></div>
             <div class="title-decoration right"></div>
-            <h1 class="fade-in">Day 10 Part 2</h1>
-            <p class="subtitle fade-in delay-1">Solving the Joltage Counter Puzzle</p>
-            <p class="fade-in delay-2" style="margin-top: 60px; color: #666;">
+            <h1 class="fade-in">Day 10: Factory</h1>
+            <p class="subtitle fade-in delay-1">Two Problems, Two Approaches</p>
+            <div class="fade-in delay-2" style="margin-top: 40px; display: flex; gap: 40px; justify-content: center;">
+                <div style="padding: 20px 30px; background: rgba(0,217,255,0.1); border: 1px solid #00d9ff; border-radius: 12px;">
+                    <div style="color: #00d9ff; font-weight: 600;">Part 1</div>
+                    <div style="color: #888; font-size: 0.9rem;">Toggle Lights → BFS</div>
+                </div>
+                <div style="padding: 20px 30px; background: rgba(0,255,136,0.1); border: 1px solid #00ff88; border-radius: 12px;">
+                    <div style="color: #00ff88; font-weight: 600;">Part 2</div>
+                    <div style="color: #888; font-size: 0.9rem;">Counters → Linear Algebra</div>
+                </div>
+            </div>
+            <p class="fade-in delay-3" style="margin-top: 40px; color: #666;">
                 Press <kbd>Space</kbd> or <kbd>→</kbd> to continue
             </p>
         </div>
 
-        <!-- SLIDE 2: The Actual Problem Statement -->
+        <!-- ============ PART 1 SLIDES ============ -->
+
+        <!-- SLIDE 2: Part 1 Section -->
         <div class="slide bg-dark" data-slide="1">
-            <h2 class="fade-in">The Problem (Part 2)</h2>
+            <h1 class="fade-in" style="font-size: 4rem;">Part 1</h1>
+            <p class="subtitle fade-in delay-1">Toggle the Indicator Lights</p>
+            <div class="fade-in delay-2" style="margin-top: 30px; font-size: 1.2rem; color: #00d9ff;">
+                Solved with <strong>Breadth-First Search (BFS)</strong>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Part 1 Problem -->
+        <div class="slide bg-dark" data-slide="2">
+            <h2 class="fade-in">Part 1: The Problem</h2>
+
+            <div class="problem-box fade-in delay-1">
+                <p style="margin-bottom: 15px;">
+                    Each machine has <strong>indicator lights</strong> that are all initially <strong>OFF</strong>.
+                </p>
+                <p style="margin-bottom: 15px;">
+                    A pattern like <code>[.##.]</code> means: configure lights to be <strong>off-on-on-off</strong>.
+                </p>
+                <p style="margin-bottom: 15px;">
+                    Each button <strong>TOGGLES</strong> specific lights (on→off or off→on). A button like <code>(1,3)</code> toggles the 2nd and 4th lights.
+                </p>
+                <p>
+                    Find the <strong style="color: #ffd700;">fewest button presses</strong> to match the target pattern.
+                </p>
+            </div>
+
+            <div class="code-block fade-in delay-2" style="font-size: 1rem;">
+                <span style="color: #888;"># Example:</span><br>
+                <span style="color: #00ff88;">[.##.]</span> <span style="color: #00d9ff;">(3) (1,3) (2) (2,3) (0,2) (0,1)</span> {3,5,4,7}<br><br>
+                <span style="color: #888;"># Start: [....] (all off) → Goal: [.##.] (lights 1,2 on)</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Part 1 Key Insight -->
+        <div class="slide bg-problem" data-slide="3">
+            <h2 class="fade-in">The Key Insight: Toggle = XOR</h2>
+
+            <div class="flex-row fade-in delay-1" style="margin: 30px 0;">
+                <div class="card" style="text-align: center; min-width: 250px;">
+                    <h3 style="color: #00d9ff; margin-bottom: 15px;">State as Bits</h3>
+                    <div style="font-family: monospace; font-size: 1.3rem;">
+                        <div>[<span style="color:#666">.</span><span style="color:#00ff88">#</span><span style="color:#00ff88">#</span><span style="color:#666">.</span>] = <span style="color:#ffd700">0110</span></div>
+                        <div style="margin-top: 10px; color: #888; font-size: 0.9rem;">off=0, on=1</div>
+                    </div>
+                </div>
+                <div class="card" style="text-align: center; min-width: 250px;">
+                    <h3 style="color: #00d9ff; margin-bottom: 15px;">Button as Mask</h3>
+                    <div style="font-family: monospace; font-size: 1.3rem;">
+                        <div>(1,3) = <span style="color:#ffd700">1010</span></div>
+                        <div style="margin-top: 10px; color: #888; font-size: 0.9rem;">toggles bits 1 & 3</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card fade-in delay-2" style="background: rgba(0,255,136,0.1); border-color: #00ff88;">
+                <h3 style="color: #00ff88; margin-bottom: 15px;">Toggle = XOR Operation</h3>
+                <div style="font-family: monospace; font-size: 1.2rem; text-align: center;">
+                    state <span style="color:#00d9ff">XOR</span> button_mask = new_state<br>
+                    <span style="color:#888">0110 ⊕ 1010 = 1100</span>
+                </div>
+            </div>
+
+            <p class="fade-in delay-3" style="margin-top: 25px; font-size: 1.3rem;">
+                Each button press <span class="highlight">transforms the state</span> — this is a <span class="highlight-green">graph problem!</span>
+            </p>
+        </div>
+
+        <!-- SLIDE 5: Part 1 State Space -->
+        <div class="slide bg-dark" data-slide="4">
+            <h2 class="fade-in">BFS Search Tree</h2>
+            <p class="fade-in delay-1" style="margin-bottom: 10px; color: #888; font-size: 0.9rem;">
+                Machine 1: <code>[.##.]</code> — 6 buttons — Target: <span style="color: #ff6b81; font-family: monospace;">0110</span> — Answer: <span style="color: #00ff88;">2 presses</span>
+            </p>
+
+            <div class="fade-in delay-1" style="display: flex; gap: 20px; align-items: flex-start; width: 100%; max-width: 1300px;">
+                <!-- BFS Tree -->
+                <div style="flex: 2;">
+                    <div class="bfs-tree-container">
+                        <div class="bfs-level" id="bfsLevel0">
+                            <div class="bfs-level-label">Level 0</div>
+                            <div class="bfs-nodes" id="bfsNodes0"></div>
+                        </div>
+                        <div class="bfs-level" id="bfsLevel1" style="opacity: 0.3;">
+                            <div class="bfs-level-label">Level 1</div>
+                            <div class="bfs-nodes" id="bfsNodes1"></div>
+                        </div>
+                        <div class="bfs-level" id="bfsLevel2" style="opacity: 0.3;">
+                            <div class="bfs-level-label">Level 2</div>
+                            <div class="bfs-nodes" id="bfsNodes2"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                        <button class="demo-btn" onclick="bfsExpandLevel()">Expand Next Level</button>
+                        <button class="demo-btn" onclick="bfsShowPath()">Show Solution Path</button>
+                        <button class="demo-btn" onclick="bfsReset()">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Info Panel -->
+                <div style="flex: 0 0 320px;">
+                    <div class="bfs-info-panel">
+                        <div class="bfs-info-section">
+                            <div class="bfs-info-title">FIFO Queue</div>
+                            <div id="bfsQueue" class="bfs-queue-display"></div>
+                        </div>
+
+                        <div class="bfs-info-section">
+                            <div class="bfs-info-title">Statistics</div>
+                            <div class="bfs-stat-row">
+                                <span>States explored:</span>
+                                <span id="bfsExplored" style="color: #00d9ff;">1</span>
+                            </div>
+                            <div class="bfs-stat-row">
+                                <span>Current level:</span>
+                                <span id="bfsCurrentLevel" style="color: #00ff88;">0</span>
+                            </div>
+                        </div>
+
+                        <div class="bfs-info-section">
+                            <div class="bfs-info-title">Buttons (XOR masks)</div>
+                            <div style="font-family: monospace; font-size: 0.8rem; color: #888; line-height: 1.6;">
+                                (3)→1000 (1,3)→1010<br>
+                                (2)→0100 (2,3)→1100<br>
+                                (0,2)→0101 (0,1)→0011
+                            </div>
+                        </div>
+
+                        <div id="bfsResult" class="bfs-result-panel" style="display: none;">
+                            <div style="color: #00ff88; font-weight: 600; font-size: 1.1rem;">TARGET FOUND!</div>
+                            <div style="color: #ffd700; font-size: 0.9rem; margin-top: 5px;">
+                                Path: <span id="bfsPathDisplay"></span>
+                            </div>
+                            <div style="color: #fff; font-size: 1.3rem; font-weight: bold; margin-top: 8px;">
+                                <span id="bfsResultPresses">2</span> presses
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Part 1 BFS Algorithm -->
+        <div class="slide bg-solution" data-slide="5">
+            <h2 class="fade-in" style="margin-bottom: 10px;">The BFS Algorithm</h2>
+
+            <div class="split-container fade-in delay-1">
+                <div class="code-panel">
+                    <div class="code-header">day10part1.py</div>
+                    <div class="code-content" id="bfsCodeContent" style="font-size: 0.8rem;">
+                        <div class="code-line bfs-code" data-bfs-step="0">
+                            <span class="line-num">1</span>
+                            <span class="line-content"><span class="keyword">def</span> <span class="function">min_presses</span>(target, buttons):</span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="1">
+                            <span class="line-num">2</span>
+                            <span class="line-content">&nbsp;&nbsp;start = <span class="number">0</span> <span class="comment"># all lights off</span></span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="2">
+                            <span class="line-num">3</span>
+                            <span class="line-content">&nbsp;&nbsp;visited = {start}</span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="3">
+                            <span class="line-num">4</span>
+                            <span class="line-content">&nbsp;&nbsp;queue = deque([(start, <span class="number">0</span>)])</span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="4">
+                            <span class="line-num">5</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="4">
+                            <span class="line-num">6</span>
+                            <span class="line-content">&nbsp;&nbsp;<span class="keyword">while</span> queue:</span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="5">
+                            <span class="line-num">7</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;state, presses = queue.popleft()</span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="6">
+                            <span class="line-num">8</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="6">
+                            <span class="line-num">9</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> b <span class="keyword">in</span> buttons:</span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="7">
+                            <span class="line-num">10</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nxt = state <span class="keyword">^</span> b <span class="comment"># XOR toggle</span></span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="8">
+                            <span class="line-num">11</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="8">
+                            <span class="line-num">12</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> nxt == target:</span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="9">
+                            <span class="line-num">13</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> presses + <span class="number">1</span></span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="10">
+                            <span class="line-num">14</span>
+                            <span class="line-content"></span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="10">
+                            <span class="line-num">15</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> nxt <span class="keyword">not in</span> visited:</span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="11">
+                            <span class="line-num">16</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visited.add(nxt)</span>
+                        </div>
+                        <div class="code-line bfs-code" data-bfs-step="12">
+                            <span class="line-num">17</span>
+                            <span class="line-content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;queue.append((nxt, presses+<span class="number">1</span>))</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-panel">
+                    <div class="viz-header">Live State</div>
+                    <div class="viz-state" style="justify-content: flex-start; padding-top: 8px;">
+                        <div class="bfs-viz-section">
+                            <div class="bfs-viz-label">Target:</div>
+                            <div class="bfs-viz-value" id="bfsTargetDisplay">
+                                <span class="bfs-state-box target">0110</span>
+                            </div>
+                        </div>
+
+                        <div class="bfs-viz-section">
+                            <div class="bfs-viz-label">Current State:</div>
+                            <div class="bfs-viz-value" id="bfsCurrentDisplay">
+                                <span class="bfs-state-box">-</span>
+                                <span class="bfs-press-count" id="bfsPressCount">(- presses)</span>
+                            </div>
+                        </div>
+
+                        <div class="bfs-viz-section">
+                            <div class="bfs-viz-label">Queue (FIFO):</div>
+                            <div class="bfs-queue-display" id="bfsQueueDisplay">
+                                <span class="bfs-queue-item">empty</span>
+                            </div>
+                        </div>
+
+                        <div class="bfs-viz-section">
+                            <div class="bfs-viz-label">Visited:</div>
+                            <div class="bfs-visited-display" id="bfsVisitedDisplay">
+                                <span class="bfs-visited-item">none</span>
+                            </div>
+                        </div>
+
+                        <div id="bfsPhase" style="margin-top: 12px; padding: 10px; background: rgba(0,217,255,0.1); border-radius: 8px; text-align: center; color: #00d9ff; font-size: 0.9rem;">
+                            Phase: Initialization
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-viz-controls fade-in delay-2">
+                <button class="demo-btn" onclick="prevBFSStep()">← Previous</button>
+                <button class="demo-btn" onclick="nextBFSStep()">Next →</button>
+                <button class="demo-btn" onclick="autoPlayBFS()">▶ Auto Play</button>
+                <button class="demo-btn" onclick="resetBFSViz()">Reset</button>
+            </div>
+            <div class="code-viz-hint fade-in delay-3">Use buttons or arrow keys to step through the algorithm</div>
+        </div>
+
+        <!-- SLIDE 7: Part 1 Answer -->
+        <div class="slide bg-gradient" data-slide="6">
+            <h2 class="fade-in">Part 1 Answer</h2>
+
+            <p class="fade-in delay-1" style="margin-bottom: 20px; color: #888;">
+                Apply BFS to every machine, sum the results:
+            </p>
+
+            <div class="machine-sum fade-in delay-2" id="machineSumP1">
+                <div class="machine-row" id="p1m1">
+                    <span class="label">Machine 1:</span>
+                    <span class="value">2 presses</span>
+                </div>
+                <div class="machine-row" id="p1m2">
+                    <span class="label">Machine 2:</span>
+                    <span class="value">3 presses</span>
+                </div>
+                <div class="machine-row" id="p1m3">
+                    <span class="label">Machine 3:</span>
+                    <span class="value">2 presses</span>
+                </div>
+                <div class="machine-row" id="p1mN">
+                    <span class="label">...</span>
+                    <span class="value">...</span>
+                </div>
+                <div class="machine-row total" id="p1mTotal">
+                    <span class="label">TOTAL:</span>
+                    <span class="value" id="p1TotalValue">547</span>
+                </div>
+            </div>
+
+            <button class="demo-btn fade-in delay-3" onclick="animateAnswerP1()">Show Calculation</button>
+
+            <div class="fade-in delay-4" style="margin-top: 30px; padding: 15px 30px; background: rgba(0,217,255,0.1); border-radius: 12px; border: 1px solid #00d9ff;">
+                <p style="font-size: 1rem; color: #00d9ff;">
+                    BFS guarantees minimum: explores <strong>all k-press states before (k+1)-press states</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Transition to Part 2 -->
+        <div class="slide bg-dark" data-slide="7">
+            <h1 class="fade-in" style="font-size: 4rem;">Part 2</h1>
+            <p class="subtitle fade-in delay-1">Configure the Joltage Counters</p>
+            <div class="fade-in delay-2" style="margin-top: 30px; font-size: 1.2rem; color: #00ff88;">
+                Solved with <strong>Gaussian Elimination</strong>
+            </div>
+
+            <div class="fade-in delay-3" style="margin-top: 40px; padding: 25px; background: rgba(255,255,255,0.05); border-radius: 12px; max-width: 600px;">
+                <p style="color: #888; font-size: 1.1rem;">
+                    <span style="color: #ff6b81;">Why not BFS?</span><br>
+                    Counters can be pressed <strong>many times</strong> (not just toggle).<br>
+                    State space becomes infinite → BFS won't work!
+                </p>
+            </div>
+        </div>
+
+        <!-- ============ PART 2 SLIDES ============ -->
+
+        <!-- SLIDE 9: Part 2 Problem Statement -->
+        <div class="slide bg-dark" data-slide="8">
+            <h2 class="fade-in">Part 2: The Problem</h2>
 
             <div class="problem-box fade-in delay-1">
                 <p style="margin-bottom: 15px;">
@@ -1016,8 +1603,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 3: Spotting the Pattern -->
-        <div class="slide bg-problem" data-slide="2">
+        <!-- SLIDE 10: Spotting the Pattern -->
+        <div class="slide bg-problem" data-slide="9">
             <h2 class="fade-in">Spotting the Pattern</h2>
             <p class="fade-in delay-1" style="margin-bottom: 20px; color: #888;">
                 What clues in the problem hint at the solution approach?
@@ -1065,8 +1652,8 @@
             </p>
         </div>
 
-        <!-- SLIDE 4: Translating to Math -->
-        <div class="slide bg-dark" data-slide="3">
+        <!-- SLIDE 11: Translating to Math -->
+        <div class="slide bg-dark" data-slide="10">
             <h2 class="fade-in">Translating to Math</h2>
 
             <p class="fade-in delay-1" style="margin-bottom: 25px;">
@@ -1089,8 +1676,8 @@
             </p>
         </div>
 
-        <!-- SLIDE 5: Matrix Form -->
-        <div class="slide bg-dark" data-slide="4">
+        <!-- SLIDE 12: Matrix Form -->
+        <div class="slide bg-dark" data-slide="11">
             <h2 class="fade-in">In Matrix Form</h2>
 
             <div class="matrix-container fade-in delay-1">
@@ -1153,8 +1740,8 @@
             </p>
         </div>
 
-        <!-- SLIDE 6: Gaussian Elimination -->
-        <div class="slide bg-solution" data-slide="5">
+        <!-- SLIDE 13: Gaussian Elimination -->
+        <div class="slide bg-solution" data-slide="12">
             <h2 class="fade-in">The Solution: Gaussian Elimination</h2>
 
             <p class="fade-in delay-1" style="font-size: 1.3rem; max-width: 800px; margin-bottom: 30px;">
@@ -1174,8 +1761,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 7: Step by Step -->
-        <div class="slide bg-dark" data-slide="6">
+        <!-- SLIDE 14: Step by Step -->
+        <div class="slide bg-dark" data-slide="13">
             <h2 class="fade-in">Step by Step <span style="font-size: 0.5em; color: #666; font-weight: normal;">(<kbd>→</kbd> <kbd>←</kbd> to navigate)</span></h2>
 
             <div class="elimination-container fade-in delay-1" id="elimContainer">
@@ -1185,8 +1772,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 8: Code + Visualization Side by Side -->
-        <div class="slide bg-dark" data-slide="7">
+        <!-- SLIDE 15: Code + Visualization Side by Side -->
+        <div class="slide bg-dark" data-slide="14">
             <h2 class="fade-in" style="margin-bottom: 15px;">The Algorithm in Action</h2>
 
             <div class="split-container fade-in delay-1">
@@ -1463,8 +2050,8 @@
             <div class="code-viz-hint fade-in delay-3">Use buttons or arrow keys to step through the algorithm</div>
         </div>
 
-        <!-- SLIDE 9: 3D Visualization -->
-        <div class="slide bg-dark" data-slide="8">
+        <!-- SLIDE 16: 3D Visualization -->
+        <div class="slide bg-dark" data-slide="15">
             <h2 class="fade-in">Visualizing the Solution Space</h2>
             <p class="fade-in delay-1" style="margin-bottom: 20px; font-size: 1.1rem; color: #888;">
                 Each constraint is a plane. The solution is where they all intersect.
@@ -1492,8 +2079,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 10: Building to the Answer -->
-        <div class="slide bg-success" data-slide="9">
+        <!-- SLIDE 17: Building to the Answer -->
+        <div class="slide bg-success" data-slide="16">
             <h2 class="fade-in">Building to the Answer</h2>
             <p class="fade-in delay-1" style="margin-bottom: 30px;">
                 Apply this to every machine in the input, then sum the results:
@@ -1525,8 +2112,8 @@
             <button class="demo-btn fade-in delay-3" onclick="animateAnswer()">Show Calculation</button>
         </div>
 
-        <!-- SLIDE 11: The Answer -->
-        <div class="slide bg-gradient" data-slide="10">
+        <!-- SLIDE 18: The Answer -->
+        <div class="slide bg-gradient" data-slide="17">
             <h2 class="fade-in">The Answer</h2>
 
             <div class="big-answer fade-in delay-1">21,111</div>
@@ -1543,8 +2130,8 @@
             </div>
         </div>
 
-        <!-- SLIDE 12: Key Takeaways -->
-        <div class="slide bg-dark" data-slide="11">
+        <!-- SLIDE 19: Key Takeaways -->
+        <div class="slide bg-dark" data-slide="18">
             <h2 class="fade-in">Key Takeaways</h2>
 
             <ul class="bullet-list fade-in delay-1">
@@ -1576,7 +2163,7 @@
     <script>
         // ============ SLIDE NAVIGATION ============
         let currentSlide = 0;
-        const totalSlides = 12;
+        const totalSlides = 19;
 
         function updateSlide() {
             const slides = document.querySelectorAll('.slide');
@@ -1599,20 +2186,33 @@
             document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
 
             // Initialize slide-specific content
-            if (currentSlide === 6) initElimination();
-            if (currentSlide === 7) initCodeViz();
-            if (currentSlide === 8) initViz3D();
-            if (currentSlide === 9) resetAnswerAnimation();
+            if (currentSlide === 4) initBFSCanvas();
+            if (currentSlide === 5) initBFSCodeViz();
+            if (currentSlide === 6) resetAnswerP1();
+            if (currentSlide === 13) initElimination();
+            if (currentSlide === 14) initCodeViz();
+            if (currentSlide === 15) initViz3D();
+            if (currentSlide === 16) resetAnswerAnimation();
+        }
+
+        function initBFSCodeViz() {
+            bfsCodeStep = 0;
+            updateBFSViz();
         }
 
         function nextSlide() {
-            // On elimination slide (6), step through elimination first
-            if (currentSlide === 6 && elimStep < elimSteps.length - 1) {
+            // On BFS code viz slide (5), step through BFS first
+            if (currentSlide === 5 && bfsCodeStep < bfsCodeSteps.length - 1) {
+                nextBFSStep();
+                return;
+            }
+            // On elimination slide (13), step through elimination first
+            if (currentSlide === 13 && elimStep < elimSteps.length - 1) {
                 nextElimStep();
                 return;
             }
-            // On code viz slide (7), step through code first
-            if (currentSlide === 7 && codeStep < codeSteps.length - 1) {
+            // On code viz slide (14), step through code first
+            if (currentSlide === 14 && codeStep < codeSteps.length - 1) {
                 nextCodeStep();
                 return;
             }
@@ -1623,13 +2223,18 @@
         }
 
         function prevSlide() {
-            // On elimination slide (6), step back through elimination first
-            if (currentSlide === 6 && elimStep > 0) {
+            // On BFS code viz slide (5), step back through BFS first
+            if (currentSlide === 5 && bfsCodeStep > 0) {
+                prevBFSStep();
+                return;
+            }
+            // On elimination slide (13), step back through elimination first
+            if (currentSlide === 13 && elimStep > 0) {
                 prevElimStep();
                 return;
             }
-            // On code viz slide (7), step back through code first
-            if (currentSlide === 7 && codeStep > 0) {
+            // On code viz slide (14), step back through code first
+            if (currentSlide === 14 && codeStep > 0) {
                 prevCodeStep();
                 return;
             }
@@ -2138,6 +2743,459 @@
             }
             codeStep = 0;
             updateCodeViz();
+        }
+
+        // ============ BFS CODE VISUALIZATION ============
+        let bfsCodeStep = 0;
+        let bfsAutoPlayInterval = null;
+
+        // BFS walk-through using Machine 1: [.##.] target=0110=6
+        // Buttons: (3)=8, (1,3)=10, (2)=4, (2,3)=12, (0,2)=5, (0,1)=3
+        const bfsCodeSteps = [
+            {
+                phase: "Define function",
+                highlight: [0],
+                current: null,
+                presses: null,
+                queue: [],
+                visited: [],
+                action: "Receive target=0110 and buttons list"
+            },
+            {
+                phase: "Initialize start state",
+                highlight: [1],
+                current: null,
+                presses: null,
+                queue: [],
+                visited: [],
+                action: "start = 0000 (all lights off)"
+            },
+            {
+                phase: "Initialize visited set",
+                highlight: [2],
+                current: null,
+                presses: null,
+                queue: [],
+                visited: ['0000'],
+                action: "Mark 0000 as visited"
+            },
+            {
+                phase: "Initialize queue",
+                highlight: [3],
+                current: null,
+                presses: null,
+                queue: [{ state: '0000', presses: 0 }],
+                visited: ['0000'],
+                action: "Add (0000, 0) to queue"
+            },
+            {
+                phase: "Enter while loop",
+                highlight: [4],
+                current: null,
+                presses: null,
+                queue: [{ state: '0000', presses: 0 }],
+                visited: ['0000'],
+                action: "Queue not empty → continue"
+            },
+            {
+                phase: "Pop from queue",
+                highlight: [5],
+                current: '0000',
+                presses: 0,
+                queue: [],
+                visited: ['0000'],
+                action: "Pop (0000, 0) from front"
+            },
+            {
+                phase: "Iterate buttons",
+                highlight: [6],
+                current: '0000',
+                presses: 0,
+                queue: [],
+                visited: ['0000'],
+                action: "Try each button..."
+            },
+            {
+                phase: "XOR with button (0,2)=5",
+                highlight: [7],
+                current: '0000',
+                presses: 0,
+                queue: [],
+                visited: ['0000'],
+                action: "0000 ^ 0101 = 0101",
+                trying: '0101'
+            },
+            {
+                phase: "Check if target",
+                highlight: [8],
+                current: '0000',
+                presses: 0,
+                queue: [],
+                visited: ['0000'],
+                action: "0101 ≠ 0110 (target)",
+                trying: '0101'
+            },
+            {
+                phase: "Add to queue",
+                highlight: [10, 11, 12],
+                current: '0000',
+                presses: 0,
+                queue: [{ state: '0101', presses: 1 }],
+                visited: ['0000', '0101'],
+                action: "0101 is new → add to queue",
+                newVisited: '0101'
+            },
+            {
+                phase: "XOR with button (0,1)=3",
+                highlight: [7],
+                current: '0000',
+                presses: 0,
+                queue: [{ state: '0101', presses: 1 }],
+                visited: ['0000', '0101'],
+                action: "0000 ^ 0011 = 0011",
+                trying: '0011'
+            },
+            {
+                phase: "Add 0011 to queue",
+                highlight: [10, 11, 12],
+                current: '0000',
+                presses: 0,
+                queue: [{ state: '0101', presses: 1 }, { state: '0011', presses: 1 }],
+                visited: ['0000', '0101', '0011'],
+                action: "0011 is new → add to queue",
+                newVisited: '0011'
+            },
+            {
+                phase: "... (process more buttons)",
+                highlight: [6],
+                current: '0000',
+                presses: 0,
+                queue: [{ state: '0101', presses: 1 }, { state: '0011', presses: 1 }, { state: '1000', presses: 1 }, { state: '1010', presses: 1 }, { state: '0100', presses: 1 }, { state: '1100', presses: 1 }],
+                visited: ['0000', '0101', '0011', '1000', '1010', '0100', '1100'],
+                action: "All 6 new states added for level 1"
+            },
+            {
+                phase: "Pop next state",
+                highlight: [5],
+                current: '0101',
+                presses: 1,
+                queue: [{ state: '0011', presses: 1 }, { state: '1000', presses: 1 }, { state: '1010', presses: 1 }, { state: '0100', presses: 1 }, { state: '1100', presses: 1 }],
+                visited: ['0000', '0101', '0011', '1000', '1010', '0100', '1100'],
+                action: "Pop (0101, 1) from front"
+            },
+            {
+                phase: "XOR with button (0,1)=3",
+                highlight: [7],
+                current: '0101',
+                presses: 1,
+                queue: [{ state: '0011', presses: 1 }, { state: '1000', presses: 1 }, { state: '1010', presses: 1 }, { state: '0100', presses: 1 }, { state: '1100', presses: 1 }],
+                visited: ['0000', '0101', '0011', '1000', '1010', '0100', '1100'],
+                action: "0101 ^ 0011 = 0110",
+                trying: '0110'
+            },
+            {
+                phase: "Check if target",
+                highlight: [8],
+                current: '0101',
+                presses: 1,
+                queue: [{ state: '0011', presses: 1 }, { state: '1000', presses: 1 }, { state: '1010', presses: 1 }, { state: '0100', presses: 1 }, { state: '1100', presses: 1 }],
+                visited: ['0000', '0101', '0011', '1000', '1010', '0100', '1100'],
+                action: "0110 == 0110 ✓ TARGET FOUND!",
+                trying: '0110',
+                found: true
+            },
+            {
+                phase: "Return result!",
+                highlight: [9],
+                current: '0110',
+                presses: 2,
+                queue: [],
+                visited: ['0000', '0101', '0011', '1000', '1010', '0100', '1100', '0110'],
+                action: "Return presses + 1 = 2",
+                found: true,
+                done: true
+            }
+        ];
+
+        function updateBFSViz() {
+            const step = bfsCodeSteps[bfsCodeStep];
+            if (!step) return;
+
+            // Update code highlighting
+            let firstHighlightedLine = null;
+            document.querySelectorAll('.code-line.bfs-code').forEach(line => {
+                line.classList.remove('highlight', 'complete');
+                const lineStep = parseInt(line.dataset.bfsStep);
+                if (step.highlight.includes(lineStep)) {
+                    line.classList.add('highlight');
+                    if (!firstHighlightedLine) firstHighlightedLine = line;
+                } else if (lineStep < Math.min(...step.highlight)) {
+                    line.classList.add('complete');
+                }
+            });
+
+            // Auto-scroll code panel
+            if (firstHighlightedLine) {
+                const codeContent = document.getElementById('bfsCodeContent');
+                if (codeContent) {
+                    const lineTop = firstHighlightedLine.offsetTop;
+                    const lineHeight = firstHighlightedLine.offsetHeight;
+                    const containerHeight = codeContent.clientHeight;
+                    const scrollTop = codeContent.scrollTop;
+                    if (lineTop < scrollTop || lineTop + lineHeight > scrollTop + containerHeight) {
+                        codeContent.scrollTop = lineTop - containerHeight / 3;
+                    }
+                }
+            }
+
+            // Update current state display
+            const currentDisplay = document.getElementById('bfsCurrentDisplay');
+            if (currentDisplay) {
+                let stateClass = 'bfs-state-box';
+                if (step.found) stateClass += ' found';
+                else if (step.current) stateClass += ' current';
+
+                const stateVal = step.trying || step.current || '-';
+                currentDisplay.innerHTML = `
+                    <span class="${stateClass}">${stateVal}</span>
+                    <span class="bfs-press-count">(${step.presses !== null ? step.presses : '-'} presses)</span>
+                `;
+            }
+
+            // Update queue display
+            const queueDisplay = document.getElementById('bfsQueueDisplay');
+            if (queueDisplay) {
+                if (step.queue.length === 0) {
+                    queueDisplay.innerHTML = '<span class="bfs-queue-item empty">empty</span>';
+                } else {
+                    queueDisplay.innerHTML = step.queue.map((item, i) =>
+                        `<span class="bfs-queue-item${i === 0 ? ' processing' : ''}">${item.state}:${item.presses}</span>`
+                    ).join('');
+                }
+            }
+
+            // Update visited display
+            const visitedDisplay = document.getElementById('bfsVisitedDisplay');
+            if (visitedDisplay) {
+                if (step.visited.length === 0) {
+                    visitedDisplay.innerHTML = '<span class="bfs-visited-item">none</span>';
+                } else {
+                    visitedDisplay.innerHTML = step.visited.map(v =>
+                        `<span class="bfs-visited-item${v === step.newVisited ? ' new' : ''}">${v}</span>`
+                    ).join('');
+                }
+            }
+
+            // Update phase description
+            const phaseEl = document.getElementById('bfsPhase');
+            if (phaseEl) {
+                let bgColor = 'rgba(0,217,255,0.1)';
+                if (step.found) bgColor = 'rgba(255,215,0,0.2)';
+                phaseEl.style.background = bgColor;
+                phaseEl.innerHTML = `<strong>${step.phase}</strong><br><span style="font-size:0.8rem;color:#aaa;">${step.action}</span>`;
+            }
+        }
+
+        function nextBFSStep() {
+            if (bfsCodeStep < bfsCodeSteps.length - 1) {
+                bfsCodeStep++;
+                updateBFSViz();
+            }
+        }
+
+        function prevBFSStep() {
+            if (bfsCodeStep > 0) {
+                bfsCodeStep--;
+                updateBFSViz();
+            }
+        }
+
+        function autoPlayBFS() {
+            if (bfsAutoPlayInterval) {
+                clearInterval(bfsAutoPlayInterval);
+                bfsAutoPlayInterval = null;
+                return;
+            }
+            bfsAutoPlayInterval = setInterval(() => {
+                if (bfsCodeStep < bfsCodeSteps.length - 1) {
+                    bfsCodeStep++;
+                    updateBFSViz();
+                } else {
+                    clearInterval(bfsAutoPlayInterval);
+                    bfsAutoPlayInterval = null;
+                }
+            }, 1200);
+        }
+
+        function resetBFSViz() {
+            if (bfsAutoPlayInterval) {
+                clearInterval(bfsAutoPlayInterval);
+                bfsAutoPlayInterval = null;
+            }
+            bfsCodeStep = 0;
+            updateBFSViz();
+        }
+
+        // ============ BFS TREE VISUALIZATION ============
+        // Machine 1: [.##.] with 6 buttons, Target=0110=6
+        // Buttons: (3)=8, (1,3)=10, (2)=4, (2,3)=12, (0,2)=5, (0,1)=3
+        const bfsButtons = [8, 10, 4, 12, 5, 3];
+        const bfsButtonNames = ['(3)', '(1,3)', '(2)', '(2,3)', '(0,2)', '(0,1)'];
+        const bfsTarget = 6;  // 0110
+
+        // Pre-computed BFS tree for visualization
+        const bfsTreeData = {
+            level0: [{ state: 0, label: '0000', isStart: true }],
+            level1: [
+                { state: 8, label: '1000', parent: 0 },
+                { state: 10, label: '1010', parent: 0 },
+                { state: 4, label: '0100', parent: 0 },
+                { state: 12, label: '1100', parent: 0 },
+                { state: 5, label: '0101', parent: 0 },
+                { state: 3, label: '0011', parent: 0 }
+            ],
+            level2: [
+                { state: 2, label: '0010', parent: 8 },
+                { state: 6, label: '0110', parent: 5, isTarget: true },  // TARGET! via (0,2) then (0,1)
+                { state: 14, label: '1110', parent: 10 },
+                { state: 1, label: '0001', parent: 4 },
+                { state: 9, label: '1001', parent: 12 },
+                { state: 7, label: '0111', parent: 3 }
+            ],
+            // Solution path: 0 -> 5 (press 0,2) -> 6 (press 0,1)
+            solutionPath: [0, 5, 6],
+            solutionButtons: ['(0,2)', '(0,1)']
+        };
+
+        let bfsCurrentLevel = 0;
+        let bfsShowingSolution = false;
+
+        function toBinary(n) {
+            return n.toString(2).padStart(4, '0');
+        }
+
+        function initBFSCanvas() {
+            bfsReset();
+        }
+
+        function bfsReset() {
+            bfsCurrentLevel = 0;
+            bfsShowingSolution = false;
+            document.getElementById('bfsResult').style.display = 'none';
+            renderBFSTree();
+            updateBFSInfo();
+        }
+
+        function bfsExpandLevel() {
+            if (bfsCurrentLevel < 2) {
+                bfsCurrentLevel++;
+                renderBFSTree();
+                updateBFSInfo();
+
+                // Check if target found at this level
+                if (bfsCurrentLevel === 2) {
+                    setTimeout(() => {
+                        document.getElementById('bfsResult').style.display = 'block';
+                        document.getElementById('bfsResultPresses').textContent = '2';
+                        document.getElementById('bfsPathDisplay').textContent = '0000 → 0101 → 0110';
+                    }, 500);
+                }
+            }
+        }
+
+        function bfsShowPath() {
+            bfsCurrentLevel = 2;
+            bfsShowingSolution = true;
+            renderBFSTree();
+            updateBFSInfo();
+            document.getElementById('bfsResult').style.display = 'block';
+            document.getElementById('bfsResultPresses').textContent = '2';
+            document.getElementById('bfsPathDisplay').textContent = '0000 → 0101 → 0110';
+        }
+
+        function renderBFSTree() {
+            // Level 0
+            const nodes0 = document.getElementById('bfsNodes0');
+            nodes0.innerHTML = bfsTreeData.level0.map(n =>
+                `<div class="bfs-node start ${bfsShowingSolution ? 'on-path' : ''}">${n.label}</div>`
+            ).join('');
+            document.getElementById('bfsLevel0').style.opacity = '1';
+
+            // Level 1
+            const nodes1 = document.getElementById('bfsNodes1');
+            if (bfsCurrentLevel >= 1) {
+                nodes1.innerHTML = bfsTreeData.level1.map(n => {
+                    const onPath = bfsShowingSolution && bfsTreeData.solutionPath.includes(n.state);
+                    return `<div class="bfs-node ${onPath ? 'on-path' : 'visited'}">${n.label}</div>`;
+                }).join('');
+                document.getElementById('bfsLevel1').style.opacity = '1';
+            } else {
+                nodes1.innerHTML = '<span style="color:#444">Press "Expand" to explore...</span>';
+                document.getElementById('bfsLevel1').style.opacity = '0.3';
+            }
+
+            // Level 2
+            const nodes2 = document.getElementById('bfsNodes2');
+            if (bfsCurrentLevel >= 2) {
+                nodes2.innerHTML = bfsTreeData.level2.map(n => {
+                    const onPath = bfsShowingSolution && bfsTreeData.solutionPath.includes(n.state);
+                    const isTarget = n.isTarget;
+                    let cls = 'bfs-node';
+                    if (isTarget) cls += ' target';
+                    else if (onPath) cls += ' on-path';
+                    else cls += ' visited';
+                    return `<div class="${cls}">${n.label}${isTarget ? ' ✓' : ''}</div>`;
+                }).join('');
+                document.getElementById('bfsLevel2').style.opacity = '1';
+            } else {
+                nodes2.innerHTML = '';
+                document.getElementById('bfsLevel2').style.opacity = '0.3';
+            }
+        }
+
+        function updateBFSInfo() {
+            // Update queue
+            const queueEl = document.getElementById('bfsQueue');
+            if (queueEl) {
+                let queueItems = [];
+                if (bfsCurrentLevel === 0) {
+                    queueItems = bfsTreeData.level0.map(n => `<span class="bfs-queue-item">${n.label}</span>`);
+                } else if (bfsCurrentLevel === 1) {
+                    queueItems = bfsTreeData.level1.map(n => `<span class="bfs-queue-item">${n.label}</span>`);
+                } else {
+                    queueItems = ['<span style="color:#00ff88">Target found!</span>'];
+                }
+                queueEl.innerHTML = queueItems.join(' ');
+            }
+
+            // Update stats
+            const exploredEl = document.getElementById('bfsExplored');
+            const levelEl = document.getElementById('bfsCurrentLevel');
+            if (exploredEl) {
+                const counts = [1, 7, 13];
+                exploredEl.textContent = counts[bfsCurrentLevel];
+            }
+            if (levelEl) {
+                levelEl.textContent = bfsCurrentLevel;
+            }
+        }
+
+        // ============ PART 1 ANSWER ANIMATION ============
+        function animateAnswerP1() {
+            const rows = ['p1m1', 'p1m2', 'p1m3', 'p1mN', 'p1mTotal'];
+            rows.forEach((id, i) => {
+                setTimeout(() => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('visible');
+                }, i * 350);
+            });
+        }
+
+        function resetAnswerP1() {
+            ['p1m1', 'p1m2', 'p1m3', 'p1mN', 'p1mTotal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('visible');
+            });
         }
 
         // Initialize
